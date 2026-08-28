@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_dark_navy">#0A0F1D</color>
+    <color name="brand_navy_card">#131B2E</color>
+    <color name="brand_pink_primary">#E11D48</color>
+    <color name="brand_pink_secondary">#FB7185</color>
+    <color name="brand_accent_cyan">#06B6D4</color>
+    <color name="brand_text_white">#FFFFFF</color>
+    <color name="brand_text_muted">#94A3B8</color>
+</resources>

@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SAFE Women</string>
+    <string name="accessibility_service_description">Monitors emergency hardware triggers for SAFE Women background safety dispatch.</string>
+    <string name="notification_channel_name">SAFE Women Active Protection</string>
+    <string name="notification_channel_description">Maintains active background safety monitoring for bus passengers.</string>
+    <string name="notification_title">SAFE Protection Active</string>
+    <string name="notification_text">Background volume key listener is monitoring for emergency trigger.</string>
+    <string name="police_hotline_number">119</string>
+    <string name="ntc_hotline_number">1933</string>
+</resources>

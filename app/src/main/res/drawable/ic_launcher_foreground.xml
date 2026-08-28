@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Safety Shield Outline -->
+    <path
+        android:strokeWidth="3.5"
+        android:strokeColor="#E11D48"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#1AF43F5E"
+        android:pathData="M54,22 C68,22 80,26 80,36 C80,58 66,74 54,86 C42,74 28,58 28,36 C28,26 40,22 54,22 Z" />
+
+    <!-- Inner Protective Star/Lotus Core -->
+    <path
+        android:fillColor="#06B6D4"
+        android:pathData="M54,34 L57.5,46 L70,46 L60,53.5 L64,65 L54,58 L44,65 L48,53.5 L38,46 L50.5,46 Z" />
+
+    <!-- Pulse Signal Center Dot -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,51 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0" />
+</vector>

@@ -1,0 +1,113 @@
+package lk.kiu.safewomen.ui
+
+import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.compose.rememberNavController
+import lk.kiu.safewomen.SafeWomenApp
+import lk.kiu.safewomen.ui.navigation.MainNavGraph
+import lk.kiu.safewomen.ui.theme.SAFEWomenTheme
+import lk.kiu.safewomen.ui.viewmodel.MainViewModel
+import lk.kiu.safewomen.ui.viewmodel.MainViewModelFactory
+import lk.kiu.safewomen.utils.Constants
+
+class MainActivity : ComponentActivity() {
+
+    private lateinit var viewModel: MainViewModel
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val smsGranted = permissions[Manifest.permission.SEND_SMS] ?: false
+        val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+
+        if (smsGranted && fineLocationGranted) {
+            Toast.makeText(this, "All critical safety permissions granted.", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "SMS & Location permissions are required for emergency safety dispatch.", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private val emergencyBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == Constants.ACTION_SMS_DISPATCHED) {
+                val message = intent.getStringExtra(Constants.EXTRA_LOG_MESSAGE) ?: "Alert Dispatched"
+                val isSuccess = intent.getBooleanExtra(Constants.EXTRA_IS_SUCCESS, true)
+                Toast.makeText(
+                    this@MainActivity,
+                    if (isSuccess) "EMERGENCY ALERT SENT: $message" else "FAILED: $message",
+                    Toast.LENGTH_LONG
+                ).show()
+                viewModel.refreshLocation()
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val app = application as SafeWomenApp
+        val factory = MainViewModelFactory(app, app.repository, app.preferenceManager)
+        viewModel = ViewModelProvider(this, factory)[MainViewModel::class.java]
+
+        requestCriticalPermissions()
+
+        val filter = IntentFilter(Constants.ACTION_SMS_DISPATCHED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(emergencyBroadcastReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(emergencyBroadcastReceiver, filter)
+        }
+
+        setContent {
+            SAFEWomenTheme {
+                val navController = rememberNavController()
+                MainNavGraph(
+                    navController = navController,
+                    viewModel = viewModel
+                )
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            unregisterReceiver(emergencyBroadcastReceiver)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun requestCriticalPermissions() {
+        val permissionsToRequest = mutableListOf(
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.CALL_PHONE
+        )
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionsToRequest.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+        val ungranted = permissionsToRequest.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (ungranted.isNotEmpty()) {
+            permissionLauncher.launch(ungranted.toTypedArray())
+        }
+    }
+}
