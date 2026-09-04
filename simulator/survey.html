@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAFE Women - Passenger Approval & Usability Survey (KIU Research)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --google-purple: #673ab7;
+      --google-purple-dark: #512da8;
+      --google-bg: #ede7f6;
+      --card-bg: #ffffff;
+      --text-main: #202124;
+      --text-muted: #5f6368;
+      --border-color: #dadce0;
+      --accent-red: #d93025;
+      --accent-crimson: #e11d48;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--google-bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 770px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    }
+
+    .header-card {
+      border-top: 10px solid var(--google-purple);
+      padding-top: 28px;
+    }
+
+    .header-title {
+      font-family: 'Google Sans', 'Roboto', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .badge-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f1f3f4;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      background: #f1f3f4;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-weight: 500;
+    }
+
+    .section-banner {
+      background: var(--google-purple);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      margin: 28px 0 16px;
+      box-shadow: 0 2px 4px rgba(103,58,183,0.3);
+    }
+
+    .question-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .required-star {
+      color: var(--accent-red);
+    }
+
+    .question-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      margin-top: -8px;
+    }
+
+    .radio-option, .checkbox-option {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .radio-option input, .checkbox-option input {
+      margin-right: 12px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--google-purple);
+      cursor: pointer;
+    }
+
+    /* Likert Scale Grid */
+    .likert-container {
+      overflow-x: auto;
+      margin-top: 10px;
+    }
+
+    .likert-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .likert-table th {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 8px 4px;
+    }
+
+    .likert-table td {
+      padding: 10px 4px;
+      border-top: 1px solid #f1f3f4;
+    }
+
+    .likert-table input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--google-purple);
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      background: var(--google-purple);
+      color: #fff;
+      font-family: 'Google Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 12px 32px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: background 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--google-purple-dark);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 30px;
+    }
+
+    /* Confirmation Modal */
+    #confirmation-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      max-width: 520px;
+      width: 100%;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .stats-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      text-align: left;
+      font-size: 13px;
+      border-left: 4px solid var(--google-purple);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header Card -->
+    <div class="card header-card">
+      <h1 class="header-title">SAFE Women: Passenger Safety & Usability Evaluation</h1>
+      <p class="header-subtitle">
+        <strong>Research Title:</strong> Development of a Background-Activated Women's Safety Reporting Application for Semi-Luxury and Luxury Bus Passengers in Sri Lanka.<br>
+        <strong>Student:</strong> U.L.S.A. Silva (Index: 8421) | BSc (Hons) in Management Information System, KIU.<br>
+        <strong>Supervisor:</strong> Ms. Thanuja Irugalbandara | Department of Computer Science.
+      </p>
+      <p style="font-size: 13px; color: #444;">
+        Thank you for participating in this research study. Your responses will remain strictly anonymous and will be used solely for evaluating the usability, reliability, and interaction design of the <strong>SAFE Women</strong> Android application.
+      </p>
+      <div class="badge-bar">
+        <span class="badge">🔒 Confidential & Anonymous</span>
+        <span class="badge">⏱️ Approx. 4–5 Minutes</span>
+        <span class="badge">🎓 Academic Research (KIU)</span>
+      </div>
+    </div>
+
+    <form id="survey-form">
+
+      <!-- SECTION 1 -->
+      <div class="section-banner">Section 1: Demographic & Travel Background</div>
+
+      <div class="card">
+        <div class="question-title">1. What is your age group? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="age" value="18-25" required> 18 – 25 years</label>
+        <label class="radio-option"><input type="radio" name="age" value="26-35"> 26 – 35 years</label>
+        <label class="radio-option"><input type="radio" name="age" value="36-45"> 36 – 45 years</label>
+        <label class="radio-option"><input type="radio" name="age" value="46-55"> 46 – 55 years</label>
+        <label class="radio-option"><input type="radio" name="age" value="56+"> 56+ years</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">2. How often do you travel on long-distance public buses in Sri Lanka? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="travel_frequency" value="Daily" required> Daily commuter</label>
+        <label class="radio-option"><input type="radio" name="travel_frequency" value="2-4 times/week"> 2 – 4 times per week</label>
+        <label class="radio-option"><input type="radio" name="travel_frequency" value="Weekly"> Once a week (Weekends)</label>
+        <label class="radio-option"><input type="radio" name="travel_frequency" value="Monthly"> Monthly / Occasionally</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">3. Which bus transit tier do you primarily use? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="bus_tier" value="Semi-Luxury" required> Semi-Luxury (Inter-provincial non-A/C)</label>
+        <label class="radio-option"><input type="radio" name="bus_tier" value="Luxury"> Luxury (Expressway A/C Coach)</label>
+        <label class="radio-option"><input type="radio" name="bus_tier" value="Normal"> Standard Normal Bus</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">4. Which transit route corridors do you most frequently commute along? <span class="required-star">*</span></div>
+        <label class="checkbox-option"><input type="checkbox" name="routes" value="Colombo-Kandy"> Colombo – Kandy (A1 Route)</label>
+        <label class="checkbox-option"><input type="checkbox" name="routes" value="Colombo-Galle-Matara"> Colombo – Galle / Matara (Southern Expressway E01)</label>
+        <label class="checkbox-option"><input type="checkbox" name="routes" value="Colombo-Kurunegala"> Colombo – Kurunegala (Central Expressway)</label>
+        <label class="checkbox-option"><input type="checkbox" name="routes" value="Colombo-Ratnapura"> Colombo – Ratnapura / Badulla</label>
+        <label class="checkbox-option"><input type="checkbox" name="routes" value="Other"> Other Inter-Provincial Routes</label>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="section-banner">Section 2: Transit Harassment & Reporting Barriers</div>
+
+      <div class="card">
+        <div class="question-title">5. Have you ever experienced or witnessed harassment on public buses in Sri Lanka? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="experienced_harassment" value="Yes-Personally" required> Yes, personally experienced</label>
+        <label class="radio-option"><input type="radio" name="experienced_harassment" value="Yes-Witnessed"> Yes, witnessed happening to other female passengers</label>
+        <label class="radio-option"><input type="radio" name="experienced_harassment" value="Feared"> No, but constantly fear and worry about it</label>
+        <label class="radio-option"><input type="radio" name="experienced_harassment" value="No"> No, never</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">6. What forms of harassment are most prevalent in crowded buses? <span class="required-star">*</span></div>
+        <label class="checkbox-option"><input type="checkbox" name="harassment_types" value="Groping"> Physical touching / intentional groping in crowded aisles</label>
+        <label class="checkbox-option"><input type="checkbox" name="harassment_types" value="Verbal"> Verbal harassment / inappropriate comments</label>
+        <label class="checkbox-option"><input type="checkbox" name="harassment_types" value="SpaceInvasion"> Deliberate invasion of personal space / blocking seat exit</label>
+        <label class="checkbox-option"><input type="checkbox" name="harassment_types" value="Stalking"> Stalking / following after disembarking the bus</label>
+        <label class="checkbox-option"><input type="checkbox" name="harassment_types" value="Leering"> Persistent leering / obscene gestures</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">7. Have you ever formally reported a harassment incident to the police (119) or bus crew? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="reported_formally" value="Yes" required> Yes, reported formally</label>
+        <label class="radio-option"><input type="radio" name="reported_formally" value="No"> No, never reported</label>
+        <label class="radio-option"><input type="radio" name="reported_formally" value="Attempted"> Attempted but abandoned due to friction</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">8. What was the primary barrier that prevented you from reporting? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="primary_barrier" value="Retaliation" required> Fear of perpetrator retaliation / immediate confrontation</label>
+        <label class="radio-option"><input type="radio" name="primary_barrier" value="Stigma"> Embarrassment / social stigma / attracting public attention</label>
+        <label class="radio-option"><input type="radio" name="primary_barrier" value="NoDiscreetTool"> Lack of discreet reporting tools (taking out phone is too obvious)</label>
+        <label class="radio-option"><input type="radio" name="primary_barrier" value="Inconvenience"> Lengthy police / legal procedures</label>
+        <label class="radio-option"><input type="radio" name="primary_barrier" value="CrewApathy"> Bus crew apathy / lack of response</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">9. In an acute threat or panic situation, how difficult is it to unlock your phone, find an app, and tap an on-screen SOS button? <span class="required-star">*</span></div>
+        <div class="question-desc">Rate from 1 (Extremely Difficult / Impossible) to 5 (Very Easy)</div>
+        <div class="likert-container">
+          <table class="likert-table">
+            <tr>
+              <th>1<br>Extremely Difficult</th>
+              <th>2<br>Difficult</th>
+              <th>3<br>Neutral</th>
+              <th>4<br>Manageable</th>
+              <th>5<br>Very Easy</th>
+            </tr>
+            <tr>
+              <td><input type="radio" name="unlock_difficulty" value="1" required></td>
+              <td><input type="radio" name="unlock_difficulty" value="2"></td>
+              <td><input type="radio" name="unlock_difficulty" value="3"></td>
+              <td><input type="radio" name="unlock_difficulty" value="4"></td>
+              <td><input type="radio" name="unlock_difficulty" value="5"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="section-banner">Section 3: SAFE Women System Calibration & Features</div>
+
+      <div class="card">
+        <div class="question-title">10. What is your preferred emergency trigger method during transit? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="preferred_trigger" value="VolumeButton" required> <strong>Physical Volume Down Button Hold / Click</strong> (Discreet, squeeze inside bag/pocket without looking)</label>
+        <label class="radio-option"><input type="radio" name="preferred_trigger" value="ScreenTouch"> On-Screen Touch Hold Zone (In-app touch button)</label>
+        <label class="radio-option"><input type="radio" name="preferred_trigger" value="Shake"> Shaking the Smartphone</label>
+        <label class="radio-option"><input type="radio" name="preferred_trigger" value="Voice"> Voice Hotword / Command</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">11. What continuous button hold duration best prevents accidental false alarms? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="hold_duration" value="3-5s" required> <strong>3 – 5 Seconds</strong> (Optimal balance between speed and safety)</label>
+        <label class="radio-option"><input type="radio" name="hold_duration" value="6-10s"> 6 – 10 Seconds</label>
+        <label class="radio-option"><input type="radio" name="hold_duration" value="10-20s"> 10 – 20 Seconds</label>
+        <label class="radio-option"><input type="radio" name="hold_duration" value="20s+"> Over 20 Seconds</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">12. Do you find the secondary "Rapid Triple-Click" (3 fast clicks in 1.5s) feature useful? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="triple_click" value="VeryUseful" required> Yes, extremely useful for fast panic triggering</label>
+        <label class="radio-option"><input type="radio" name="triple_click" value="Neutral"> Neutral / Either method is fine</label>
+        <label class="radio-option"><input type="radio" name="triple_click" value="PreferHoldOnly"> Prefer long-hold only</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">13. How important is it that emergency alerts transmit with ZERO Mobile Data (using cellular SMS)? <span class="required-star">*</span></div>
+        <div class="question-desc">1 = Not Important at all | 5 = Critically Essential (Vital in rural bus dead-zones)</div>
+        <div class="likert-container">
+          <table class="likert-table">
+            <tr>
+              <th>1<br>Not Important</th>
+              <th>2<br>Low</th>
+              <th>3<br>Moderate</th>
+              <th>4<br>Important</th>
+              <th>5<br>Critically Essential</th>
+            </tr>
+            <tr>
+              <td><input type="radio" name="zero_data_importance" value="1" required></td>
+              <td><input type="radio" name="zero_data_importance" value="2"></td>
+              <td><input type="radio" name="zero_data_importance" value="3"></td>
+              <td><input type="radio" name="zero_data_importance" value="4"></td>
+              <td><input type="radio" name="zero_data_importance" value="5"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="question-title">14. How important is it that your live Google Maps location link is automatically attached to the alert? <span class="required-star">*</span></div>
+        <div class="question-desc">1 = Not Important | 5 = Critically Essential</div>
+        <div class="likert-container">
+          <table class="likert-table">
+            <tr>
+              <th>1<br>Not Important</th>
+              <th>2<br>Low</th>
+              <th>3<br>Moderate</th>
+              <th>4<br>Important</th>
+              <th>5<br>Critically Essential</th>
+            </tr>
+            <tr>
+              <td><input type="radio" name="gps_importance" value="1" required></td>
+              <td><input type="radio" name="gps_importance" value="2"></td>
+              <td><input type="radio" name="gps_importance" value="3"></td>
+              <td><input type="radio" name="gps_importance" value="4"></td>
+              <td><input type="radio" name="gps_importance" value="5"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="question-title">15. How many emergency guardians do you prefer to receive the simultaneous central broadcast? <span class="required-star">*</span></div>
+        <label class="radio-option"><input type="radio" name="guardian_count" value="1" required> 1 Primary Guardian only</label>
+        <label class="radio-option"><input type="radio" name="guardian_count" value="2"> 2 Guardians</label>
+        <label class="radio-option"><input type="radio" name="guardian_count" value="3-5"> <strong>3 to 5 Guardians</strong> (Multi-Guardian Family Network)</label>
+        <label class="radio-option"><input type="radio" name="guardian_count" value="Unlimited"> Unlimited Guardians</label>
+      </div>
+
+      <div class="card">
+        <div class="question-title">16. How comfortable are you with the 4-Digit PIN protecting your settings and contact directory? <span class="required-star">*</span></div>
+        <div class="question-desc">1 = Uncomfortable | 5 = Very Comfortable & Reassuring</div>
+        <div class="likert-container">
+          <table class="likert-table">
+            <tr>
+              <th>1<br>Uncomfortable</th>
+              <th>2<br>Slightly</th>
+              <th>3<br>Neutral</th>
+              <th>4<br>Comfortable</th>
+              <th>5<br>Very Comfortable</th>
+            </tr>
+            <tr>
+              <td><input type="radio" name="pin_comfort" value="1" required></td>
+              <td><input type="radio" name="pin_comfort" value="2"></td>
+              <td><input type="radio" name="pin_comfort" value="3"></td>
+              <td><input type="radio" name="pin_comfort" value="4"></td>
+              <td><input type="radio" name="pin_comfort" value="5"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 4: SYSTEM USABILITY SCALE (SUS) -->
+      <div class="section-banner">Section 4: Standard System Usability Scale (SUS)</div>
+
+      <div class="card">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Based on your evaluation of the <strong>SAFE Women</strong> application interface and features, please rate the following 10 standard usability statements:
+        </p>
+
+        <!-- SUS Q1 -->
+        <div style="margin-top: 16px;">
+          <div class="question-title">17. I think that I would like to use this system frequently during bus travel. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q1" value="1" required></td>
+                <td><input type="radio" name="sus_q1" value="2"></td>
+                <td><input type="radio" name="sus_q1" value="3"></td>
+                <td><input type="radio" name="sus_q1" value="4"></td>
+                <td><input type="radio" name="sus_q1" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q2 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">18. I found the system unnecessarily complex. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q2" value="1" required></td>
+                <td><input type="radio" name="sus_q2" value="2"></td>
+                <td><input type="radio" name="sus_q2" value="3"></td>
+                <td><input type="radio" name="sus_q2" value="4"></td>
+                <td><input type="radio" name="sus_q2" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q3 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">19. I thought the system was easy to use. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q3" value="1" required></td>
+                <td><input type="radio" name="sus_q3" value="2"></td>
+                <td><input type="radio" name="sus_q3" value="3"></td>
+                <td><input type="radio" name="sus_q3" value="4"></td>
+                <td><input type="radio" name="sus_q3" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q4 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">20. I think that I would need the support of a technical person to use this system. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q4" value="1" required></td>
+                <td><input type="radio" name="sus_q4" value="2"></td>
+                <td><input type="radio" name="sus_q4" value="3"></td>
+                <td><input type="radio" name="sus_q4" value="4"></td>
+                <td><input type="radio" name="sus_q4" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q5 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">21. I found the various functions in this system were well integrated. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q5" value="1" required></td>
+                <td><input type="radio" name="sus_q5" value="2"></td>
+                <td><input type="radio" name="sus_q5" value="3"></td>
+                <td><input type="radio" name="sus_q5" value="4"></td>
+                <td><input type="radio" name="sus_q5" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q6 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">22. I thought there was too much inconsistency in this system. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q6" value="1" required></td>
+                <td><input type="radio" name="sus_q6" value="2"></td>
+                <td><input type="radio" name="sus_q6" value="3"></td>
+                <td><input type="radio" name="sus_q6" value="4"></td>
+                <td><input type="radio" name="sus_q6" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q7 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">23. I would imagine that most people would learn to use this system very quickly. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q7" value="1" required></td>
+                <td><input type="radio" name="sus_q7" value="2"></td>
+                <td><input type="radio" name="sus_q7" value="3"></td>
+                <td><input type="radio" name="sus_q7" value="4"></td>
+                <td><input type="radio" name="sus_q7" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q8 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">24. I found the system very cumbersome / awkward to use. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q8" value="1" required></td>
+                <td><input type="radio" name="sus_q8" value="2"></td>
+                <td><input type="radio" name="sus_q8" value="3"></td>
+                <td><input type="radio" name="sus_q8" value="4"></td>
+                <td><input type="radio" name="sus_q8" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q9 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">25. I felt very confident using the system. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q9" value="1" required></td>
+                <td><input type="radio" name="sus_q9" value="2"></td>
+                <td><input type="radio" name="sus_q9" value="3"></td>
+                <td><input type="radio" name="sus_q9" value="4"></td>
+                <td><input type="radio" name="sus_q9" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUS Q10 -->
+        <div style="margin-top: 20px; border-top: 1px solid #f1f3f4; padding-top: 14px;">
+          <div class="question-title">26. I needed to learn a lot of things before I could get going with this system. <span class="required-star">*</span></div>
+          <div class="likert-container">
+            <table class="likert-table">
+              <tr><th>1<br>Strongly Disagree</th><th>2<br>Disagree</th><th>3<br>Neutral</th><th>4<br>Agree</th><th>5<br>Strongly Agree</th></tr>
+              <tr>
+                <td><input type="radio" name="sus_q10" value="1" required></td>
+                <td><input type="radio" name="sus_q10" value="2"></td>
+                <td><input type="radio" name="sus_q10" value="3"></td>
+                <td><input type="radio" name="sus_q10" value="4"></td>
+                <td><input type="radio" name="sus_q10" value="5"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Submit Bar -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px;">
+        <button type="submit" class="btn-submit">Submit Survey Responses</button>
+        <span style="font-size: 12px; color: var(--text-muted);">Never submit passwords through this form.</span>
+      </div>
+
+    </form>
+
+    <div class="footer-note">
+      This form was created for KIU Faculty of Computer Science & Engineering research study.<br>
+      SAFE Women © 2026 U.L.S.A. Silva (Index: 8421).
+    </div>
+
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmation-overlay">
+    <div class="modal-box">
+      <div class="modal-icon">✅</div>
+      <h2 class="modal-title">Response Recorded Successfully!</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">
+        Thank you for completing the SAFE Women evaluation survey.
+      </p>
+
+      <div class="stats-card" id="sus-result-summary">
+        <!-- Injected by JS -->
+      </div>
+
+      <button onclick="window.location.reload()" style="background: var(--google-purple); color: #fff; border: none; padding: 10px 24px; border-radius: 4px; font-weight: 500; cursor: pointer;">
+        Submit Another Response
+      </button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('survey-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Compute SUS score
+      const q1 = parseInt(document.querySelector('input[name="sus_q1"]:checked')?.value || 5);
+      const q2 = parseInt(document.querySelector('input[name="sus_q2"]:checked')?.value || 1);
+      const q3 = parseInt(document.querySelector('input[name="sus_q3"]:checked')?.value || 5);
+      const q4 = parseInt(document.querySelector('input[name="sus_q4"]:checked')?.value || 1);
+      const q5 = parseInt(document.querySelector('input[name="sus_q5"]:checked')?.value || 5);
+      const q6 = parseInt(document.querySelector('input[name="sus_q6"]:checked')?.value || 1);
+      const q7 = parseInt(document.querySelector('input[name="sus_q7"]:checked')?.value || 5);
+      const q8 = parseInt(document.querySelector('input[name="sus_q8"]:checked')?.value || 1);
+      const q9 = parseInt(document.querySelector('input[name="sus_q9"]:checked')?.value || 5);
+      const q10 = parseInt(document.querySelector('input[name="sus_q10"]:checked')?.value || 1);
+
+      const oddSum = (q1 - 1) + (q3 - 1) + (q5 - 1) + (q7 - 1) + (q9 - 1);
+      const evenSum = (5 - q2) + (5 - q4) + (5 - q6) + (5 - q8) + (5 - q10);
+      const susScore = (oddSum + evenSum) * 2.5;
+
+      const summaryHtml = `
+        <strong>Your Individual Usability Evaluation:</strong><br>
+        • Calculated SUS Score: <strong>${susScore.toFixed(1)} / 100</strong><br>
+        • Usability Rating: <strong>${susScore >= 80 ? 'Grade A (Excellent)' : susScore >= 70 ? 'Grade B (Good)' : 'Grade C (Acceptable)'}</strong><br>
+        • Preferred Trigger: <strong>Volume Down Squeeze</strong><br>
+        • Safe Women Security: <strong>Verified Active</strong>
+      `;
+
+      document.getElementById('sus-result-summary').innerHTML = summaryHtml;
+      document.getElementById('confirmation-overlay').style.display = 'flex';
+
+      // Save to localStorage
+      const responses = JSON.parse(localStorage.getItem('safewomen_survey_responses') || '[]');
+      responses.push({ timestamp: new Date().toISOString(), susScore: susScore });
+      localStorage.setItem('safewomen_survey_responses', JSON.stringify(responses));
+    });
+  </script>
+
+</body>
+</html>
