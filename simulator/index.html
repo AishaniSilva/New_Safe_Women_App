@@ -14,20 +14,19 @@
       50% { box-shadow: 0 0 30px rgba(225, 29, 72, 0.8); }
     }
     .hardware-btn-active {
-      animation: pulseGlow 1s infinite;
+      animation: pulseGlow 0.8s infinite;
     }
-    /* Realistic Smartphone Bezel */
     .phone-chassis {
-      box-shadow: 0 30px 60px -12px rgba(0,0,0,0.8), 0 0 0 3px #334155, 0 0 0 7px #0f172a, 0 0 40px rgba(225,29,72,0.15);
+      box-shadow: 0 30px 60px -12px rgba(0,0,0,0.85), 0 0 0 3px #334155, 0 0 0 8px #0f172a, 0 0 50px rgba(225,29,72,0.18);
     }
-    .phone-screen-off {
-      background: #020617 !important;
-    }
+    /* Custom Scrollbar */
+    .chat-scroll::-webkit-scrollbar { width: 4px; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-rose-500 selection:text-white">
 
-  <!-- Top Header Navigation -->
+  <!-- Top Academic Navigation Header -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -35,37 +34,40 @@
           <i class="fa-solid fa-shield-halved text-white text-lg"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight tracking-wide text-white">SAFE Women <span class="text-xs bg-rose-900/60 text-rose-300 px-2 py-0.5 rounded border border-rose-700 ml-1">Hardware &amp; System Simulator</span></h1>
-          <p class="text-xs text-slate-400">KIU Final Year Viva Defense Simulator | U.L.S.A. Silva (Index: 8421)</p>
+          <h1 class="font-bold text-lg leading-tight tracking-wide text-white flex items-center gap-2">
+            SAFE Women <span class="text-xs bg-rose-900/60 text-rose-300 px-2 py-0.5 rounded border border-rose-700">Native Android Simulator</span>
+          </h1>
+          <p class="text-xs text-slate-400">KIU Final Year Viva Defense System | U.L.S.A. Silva (Index: 8421)</p>
         </div>
       </div>
       <div class="flex items-center space-x-3">
         <div id="protection-status-badge" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-700">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Background Service: RUNNING</span>
+          <span>Protection Service: ACTIVE</span>
         </div>
         <button onclick="resetSimulation()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center space-x-1.5 transition">
           <i class="fa-solid fa-rotate-right text-rose-400"></i>
-          <span>Reset Demo</span>
+          <span>Reset</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Main Showcase Container -->
+  <!-- Main Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
     <!-- ========================================================================= -->
-    <!-- LEFT: REALISTIC SMARTPHONE CHASSIS WITH WORKING SIDE HARDWARE BUTTONS -->
+    <!-- LEFT: REALISTIC SMARTPHONE FRAME (IDENTICAL TO THESIS SCREENSHOTS) -->
     <!-- ========================================================================= -->
     <div class="lg:col-span-6 flex flex-col items-center">
-      <div class="text-center mb-4">
-        <span class="text-xs font-semibold text-rose-300 bg-rose-950/60 px-3.5 py-1.5 rounded-full border border-rose-800 inline-flex items-center gap-1.5">
-          <i class="fa-solid fa-hand-pointer text-rose-400 animate-bounce"></i> Squeeze the Side <strong>Volume Down</strong> button for 3s
+      
+      <div class="text-center mb-3">
+        <span class="text-xs font-semibold text-rose-300 bg-rose-950/70 px-3.5 py-1.5 rounded-full border border-rose-800 inline-flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-hand-pointer text-rose-400 animate-bounce"></i> Hold the Side <strong>Volume Down</strong> button for 3s
         </span>
       </div>
 
-      <!-- Smartphone Bezel Wrapper -->
+      <!-- Smartphone Wrapper -->
       <div class="relative flex items-center">
 
         <!-- ========================================== -->
@@ -73,7 +75,7 @@
         <!-- ========================================== -->
         <div class="flex flex-col items-end space-y-4 mr-1 z-30 select-none">
           
-          <!-- Volume Up Button (Casual Media Adjust) -->
+          <!-- Volume Up (Passive Adjust) -->
           <div class="group relative flex items-center">
             <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute right-12 bg-slate-900 text-slate-300 text-[10px] px-2 py-1 rounded border border-slate-700 whitespace-nowrap pointer-events-none">
               Volume Up (Vol +)
@@ -85,16 +87,16 @@
             </button>
           </div>
 
-          <!-- Volume Down Button (THE CORE 3s EMERGENCY TRIGGER!) -->
+          <!-- Volume Down (THE CORE 3s EMERGENCY HARDWARE TRIGGER!) -->
           <div class="group relative flex items-center">
-            <!-- Floating Tooltip / Countdown Ring -->
+            <!-- Tooltip / Countdown Ring -->
             <div id="side-vol-down-tooltip" class="absolute right-14 bg-rose-950 border border-rose-600 text-rose-200 text-xs px-2.5 py-1.5 rounded-lg shadow-2xl whitespace-nowrap flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-              <span id="side-vol-down-timer-text" class="font-bold font-mono">TOUCH &amp; HOLD 3.0s</span>
+              <span id="side-vol-down-timer-text" class="font-bold font-mono">HOLD 3.0s SOS</span>
             </div>
 
             <button id="btn-side-vol-down" 
-                    class="w-6 h-24 bg-gradient-to-r from-rose-700 via-rose-600 to-rose-500 hover:from-rose-600 hover:to-rose-400 rounded-l-xl border-y-2 border-l-2 border-rose-400 shadow-xl shadow-rose-900/60 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all group">
+                    class="w-6 h-24 bg-gradient-to-r from-rose-700 via-rose-600 to-rose-500 hover:from-rose-600 hover:to-rose-400 rounded-l-xl border-y-2 border-l-2 border-rose-400 shadow-xl shadow-rose-900/60 flex flex-col items-center justify-center cursor-pointer active:scale-95 transition-all">
               <i class="fa-solid fa-volume-low text-xs text-white mb-1"></i>
               <span class="text-[9px] font-black text-white uppercase tracking-tighter rotate-[-90deg] select-none">SOS</span>
             </button>
@@ -103,21 +105,21 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- THE PHYSICAL SMARTPHONE SCREEN CHASSIS -->
+        <!-- THE SMARTPHONE FRAME (360x740 PX) -->
         <!-- ========================================== -->
-        <div id="phone-frame" class="relative w-[340px] sm:w-[360px] h-[720px] bg-slate-900 rounded-[50px] p-3.5 phone-chassis border-4 border-slate-700 flex flex-col transition-all">
+        <div id="phone-frame" class="relative w-[340px] sm:w-[365px] h-[730px] bg-slate-900 rounded-[50px] p-3.5 phone-chassis border-4 border-slate-700 flex flex-col transition-all">
           
-          <!-- Punch Hole Camera & Speaker Ear Piece -->
+          <!-- Punch Hole Camera & Speaker -->
           <div class="absolute top-6 left-1/2 -translate-x-1/2 flex items-center space-x-2 z-40">
             <div class="w-3.5 h-3.5 rounded-full bg-slate-950 border border-slate-800"></div>
             <div class="w-12 h-1.5 rounded-full bg-slate-800"></div>
           </div>
 
-          <!-- Internal Display Screen -->
-          <div id="phone-display" class="w-full h-full bg-[#0A0F1D] rounded-[40px] overflow-hidden flex flex-col relative border border-slate-800">
+          <!-- Internal Display Screen (Jetpack Compose Layout) -->
+          <div id="phone-display" class="w-full h-full bg-[#0A0F1D] rounded-[40px] overflow-hidden flex flex-col relative border border-slate-800 text-slate-100">
             
-            <!-- Top Status Bar -->
-            <div class="h-8 bg-[#0A0F1D] px-6 flex items-center justify-between text-[11px] text-slate-400 z-30">
+            <!-- Top Android Status Bar -->
+            <div class="h-7 bg-[#0A0F1D] px-6 flex items-center justify-between text-[11px] text-slate-400 z-30 select-none">
               <span id="screen-clock" class="font-bold text-slate-200">12:00</span>
               <div class="flex items-center space-x-1.5 text-xs">
                 <i class="fa-solid fa-signal text-[10px]"></i>
@@ -126,25 +128,29 @@
               </div>
             </div>
 
-            <!-- Toast / Notification Banner -->
+            <!-- Toast Banner -->
             <div id="phone-toast" class="hidden absolute top-10 left-3 right-3 bg-rose-600 text-white text-xs font-bold p-2.5 rounded-xl shadow-xl z-50 flex items-center space-x-2 animate-bounce">
               <i class="fa-solid fa-triangle-exclamation text-base"></i>
               <span id="phone-toast-msg">Emergency broadcast initiated!</span>
             </div>
 
             <!-- ================================================== -->
-            <!-- VIEW A: SECURITY 4-DIGIT PIN LOCK SCREEN (AuthScreen) -->
+            <!-- 1. SCREEN: AUTH PIN KEYPAD (Figure 4.4 AuthScreen) -->
             <!-- ================================================== -->
-            <div id="screen-auth" class="flex-1 flex flex-col justify-between p-6 bg-[#0A0F1D] text-white">
-              <div class="text-center mt-4">
-                <div class="w-12 h-12 rounded-2xl bg-rose-950/80 border border-rose-800 text-rose-500 mx-auto flex items-center justify-center text-xl mb-3 shadow-lg shadow-rose-950/50">
+            <div id="screen-auth" class="flex-1 flex flex-col justify-between p-5 bg-[#0A0F1D] text-white">
+              <div class="text-center mt-2">
+                <!-- Info Header Pill -->
+                <div class="bg-cyan-950/60 border border-cyan-800 text-cyan-300 text-[10px] px-2.5 py-1 rounded-full mb-3 inline-flex items-center gap-1.5">
+                  <i class="fa-solid fa-shield-heart text-rose-400"></i> SOS Volume Down Hold is ALWAYS active
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-rose-950/80 border border-rose-800 text-rose-500 mx-auto flex items-center justify-center text-xl mb-2 shadow-lg shadow-rose-950/50">
                   <i class="fa-solid fa-lock"></i>
                 </div>
-                <h2 class="text-lg font-black tracking-tight">Enter Safety PIN</h2>
-                <p class="text-[11px] text-slate-400 mt-1">Default PIN: <strong class="text-rose-400">1234</strong></p>
+                <h2 class="text-base font-black tracking-tight">Enter Safety PIN</h2>
+                <p class="text-[10px] text-slate-400">Registered: 0778361075 • PIN: <strong class="text-rose-400">1234</strong></p>
 
                 <!-- PIN Bullets -->
-                <div class="flex justify-center space-x-3 my-5">
+                <div class="flex justify-center space-x-3 my-4">
                   <span id="pin-dot-1" class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 transition"></span>
                   <span id="pin-dot-2" class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 transition"></span>
                   <span id="pin-dot-3" class="w-3.5 h-3.5 rounded-full border-2 border-slate-600 transition"></span>
@@ -154,47 +160,66 @@
               </div>
 
               <!-- Numeric Keypad -->
-              <div class="grid grid-cols-3 gap-3 max-w-[240px] mx-auto mb-4">
-                <button onclick="pressPin('1')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">1</button>
-                <button onclick="pressPin('2')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">2</button>
-                <button onclick="pressPin('3')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">3</button>
-                <button onclick="pressPin('4')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">4</button>
-                <button onclick="pressPin('5')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">5</button>
-                <button onclick="pressPin('6')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">6</button>
-                <button onclick="pressPin('7')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">7</button>
-                <button onclick="pressPin('8')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">8</button>
-                <button onclick="pressPin('9')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">9</button>
-                <button onclick="clearPin()" class="w-16 h-16 rounded-full bg-slate-950 text-slate-500 text-xs font-bold hover:bg-slate-900 active:scale-90 transition">CLR</button>
-                <button onclick="pressPin('0')" class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-xl font-bold hover:bg-slate-800 active:scale-90 transition">0</button>
-                <button onclick="backspacePin()" class="w-16 h-16 rounded-full bg-slate-950 text-rose-400 text-base font-bold hover:bg-slate-900 active:scale-90 transition"><i class="fa-solid fa-delete-left"></i></button>
+              <div class="grid grid-cols-3 gap-2.5 max-w-[230px] mx-auto mb-2">
+                <button onclick="pressPin('1')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">1</button>
+                <button onclick="pressPin('2')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">2</button>
+                <button onclick="pressPin('3')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">3</button>
+                <button onclick="pressPin('4')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">4</button>
+                <button onclick="pressPin('5')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">5</button>
+                <button onclick="pressPin('6')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">6</button>
+                <button onclick="pressPin('7')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">7</button>
+                <button onclick="pressPin('8')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">8</button>
+                <button onclick="pressPin('9')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">9</button>
+                <button onclick="clearPin()" class="w-15 h-15 rounded-full bg-slate-950 text-slate-500 text-xs font-bold hover:bg-slate-900 active:scale-90 transition"><i class="fa-solid fa-key"></i></button>
+                <button onclick="pressPin('0')" class="w-15 h-15 rounded-full bg-slate-900 border border-slate-800 text-lg font-bold hover:bg-slate-800 active:scale-90 transition">0</button>
+                <button onclick="backspacePin()" class="w-15 h-15 rounded-full bg-slate-950 text-rose-400 text-base font-bold hover:bg-slate-900 active:scale-90 transition"><i class="fa-solid fa-delete-left"></i></button>
               </div>
 
-              <div class="text-center text-[10px] text-slate-500 pb-2">
-                <i class="fa-solid fa-shield-heart text-rose-500 mr-1"></i> Hardware key hold works even when PIN locked
+              <div class="text-center text-[10px] text-slate-500 pb-1">
+                Hardware volume hold works even while locked
               </div>
             </div>
 
             <!-- ================================================== -->
-            <!-- VIEW B: MAIN HOME SAFETY DASHBOARD (HomeScreen) -->
+            <!-- 2. SCREEN: HOME DASHBOARD (Exact Figure 4.7)       -->
             <!-- ================================================== -->
-            <div id="screen-home" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto hidden">
-              <div class="space-y-3.5">
-                <!-- Master Status Card -->
-                <div class="flex items-center justify-between bg-slate-900/80 p-3 rounded-2xl border border-slate-800">
+            <div id="screen-home" class="flex-1 flex flex-col justify-between overflow-hidden hidden">
+              
+              <!-- Content Area -->
+              <div class="flex-1 p-4 space-y-3 overflow-y-auto">
+                
+                <!-- Header: SAFE Women Transit Safety Network -->
+                <div class="flex items-center justify-between">
                   <div>
-                    <h3 class="text-sm font-black text-white">SAFE Protection</h3>
-                    <p class="text-[10px] text-emerald-400 font-semibold">● Active (Background Listener ON)</p>
+                    <h2 class="text-base font-black text-white tracking-tight">SAFE Women</h2>
+                    <p class="text-[10px] text-slate-400">Transit Safety Network</p>
                   </div>
-                  <div class="w-8 h-8 rounded-full bg-emerald-950 border border-emerald-600 text-emerald-400 flex items-center justify-center text-xs">
-                    <i class="fa-solid fa-shield"></i>
+                  <span class="text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-700 px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+                  </span>
+                </div>
+
+                <!-- SAFE Protection Info Card (Exact Fig 4.7) -->
+                <div class="bg-[#131B2E] rounded-2xl p-3 border border-[#1E293B]">
+                  <div class="flex items-start space-x-2.5">
+                    <div class="p-1.5 rounded-lg bg-cyan-950/60 text-cyan-400 border border-cyan-800 text-xs mt-0.5">
+                      <i class="fa-solid fa-shield"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-white">SAFE Protection</div>
+                      <p class="text-[10px] text-slate-400 mt-0.5 leading-snug">
+                        Background listener active. Hold volume down for 3s or press touch zone below to trigger alert.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <!-- 3.0s Touch Hold Zone (In-App Fallback) -->
-                <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 text-center relative">
-                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Silent Touch Trigger Zone</div>
+                <!-- Silent Trigger Interface Card with HOLD ZONE (Exact Fig 4.7) -->
+                <div class="bg-[#131B2E] rounded-2xl p-4 border border-[#1E293B] text-center">
+                  <h3 class="text-xs font-bold text-white">Silent Trigger Interface</h3>
+                  <p class="text-[10px] text-slate-400 mt-0.5 mb-3">Press and hold touch zone for 3s to trigger silent emergency reporting</p>
                   
-                  <!-- Circular Hold Target -->
+                  <!-- HOLD ZONE Ring -->
                   <div class="relative w-32 h-32 mx-auto flex items-center justify-center">
                     <svg class="w-32 h-32 transform -rotate-90">
                       <circle cx="64" cy="64" r="54" stroke="#1E293B" stroke-width="6" fill="transparent"/>
@@ -204,259 +229,420 @@
                     </svg>
 
                     <button id="btn-screen-touch-zone" 
-                            class="absolute w-24 h-24 rounded-full bg-gradient-to-br from-rose-950 to-slate-950 border-2 border-rose-500 flex flex-col items-center justify-center active:scale-95 transition shadow-lg shadow-rose-950/40">
-                      <i class="fa-solid fa-fingerprint text-2xl text-rose-500"></i>
-                      <span class="text-[9px] font-bold text-white uppercase mt-1">HOLD ZONE</span>
+                            class="absolute w-24 h-24 rounded-full bg-gradient-to-br from-rose-950 via-slate-950 to-[#0A0F1D] border-2 border-rose-500 flex flex-col items-center justify-center active:scale-95 transition shadow-lg shadow-rose-950/50">
+                      <i class="fa-solid fa-fingerprint text-3xl text-rose-500"></i>
+                      <span class="text-[9px] font-bold text-white uppercase mt-1 tracking-wider">HOLD ZONE</span>
                       <span id="touch-time-display" class="text-[8px] font-mono text-rose-300">3.0s</span>
                     </button>
                   </div>
-
-                  <p id="touch-status-hint" class="text-[10px] text-slate-400 mt-2 font-medium">Hold touch zone or squeeze side volume key</p>
                 </div>
 
-                <!-- Emergency Hotlines Grid -->
-                <div class="grid grid-cols-2 gap-2">
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center space-x-2">
-                    <div class="w-7 h-7 rounded-lg bg-rose-950 text-rose-400 flex items-center justify-center text-xs">
-                      <i class="fa-solid fa-phone"></i>
-                    </div>
-                    <div>
-                      <div class="text-xs font-bold text-white">Police 119</div>
-                      <div class="text-[9px] text-slate-400">Direct Dialer</div>
-                    </div>
-                  </div>
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center space-x-2">
-                    <div class="w-7 h-7 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center text-xs">
-                      <i class="fa-solid fa-bus"></i>
-                    </div>
-                    <div>
-                      <div class="text-xs font-bold text-white">NTC 1933</div>
-                      <div class="text-[9px] text-slate-400">Bus Hotline</div>
-                    </div>
+                <!-- Emergency Hotlines (Exact Fig 4.7) -->
+                <div>
+                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Emergency Hotlines</div>
+                  <div class="grid grid-cols-2 gap-2">
+                    <a href="tel:119" class="bg-[#131B2E] hover:bg-slate-800 p-2.5 rounded-xl border border-[#1E293B] flex items-center space-x-2 transition">
+                      <div class="w-7 h-7 rounded-lg bg-rose-950 text-rose-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-shield"></i>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-white">Police (119)</div>
+                      </div>
+                    </a>
+                    <a href="tel:1933" class="bg-[#131B2E] hover:bg-slate-800 p-2.5 rounded-xl border border-[#1E293B] flex items-center space-x-2 transition">
+                      <div class="w-7 h-7 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center text-xs">
+                        <i class="fa-solid fa-bus"></i>
+                      </div>
+                      <div>
+                        <div class="text-xs font-bold text-white">NTC Bus (1933)</div>
+                      </div>
+                    </a>
                   </div>
                 </div>
 
-                <!-- Registered Guardians Quick Link -->
-                <div onclick="switchAppTab('contacts')" class="bg-slate-900 hover:bg-slate-800 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between cursor-pointer transition">
+                <!-- Registered Guardians Summary Card (Exact Fig 4.7) -->
+                <div onclick="switchAppTab('contacts')" class="bg-[#131B2E] hover:bg-slate-800 p-2.5 rounded-xl border border-[#1E293B] flex items-center justify-between cursor-pointer transition">
                   <div class="flex items-center space-x-2.5">
-                    <i class="fa-solid fa-users text-rose-400 text-xs"></i>
-                    <span class="text-xs font-semibold text-slate-200">Registered Guardians (4 Contacts)</span>
+                    <div class="w-7 h-7 rounded-lg bg-rose-950/70 text-rose-400 flex items-center justify-center text-xs">
+                      <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                      <div class="text-xs font-bold text-white">Registered Guardians</div>
+                      <div class="text-[9px] text-slate-400">5 emergency contacts ready</div>
+                    </div>
                   </div>
                   <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
                 </div>
+
               </div>
 
-              <!-- Bottom Navigation Bar -->
-              <div class="h-14 bg-slate-950/90 border-t border-slate-800 -mx-4 -mb-4 px-4 flex items-center justify-around text-xs">
-                <button onclick="switchAppTab('home')" class="text-rose-500 font-bold flex flex-col items-center">
-                  <i class="fa-solid fa-shield-halved text-base"></i>
-                  <span class="text-[9px] mt-0.5">Protect</span>
+              <!-- 5-Tab Bottom Navigation Bar (Matching Fig 4.7) -->
+              <div class="h-14 bg-[#0A0F1D] border-t border-slate-800 px-2 flex items-center justify-around text-xs select-none">
+                <button onclick="switchAppTab('home')" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow">
+                  <i class="fa-solid fa-shield-halved text-xs"></i>
+                  <span class="text-[10px]">Protection</span>
                 </button>
                 <button onclick="switchAppTab('contacts')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-user-group text-base"></i>
-                  <span class="text-[9px] mt-0.5">Guardians</span>
+                  <i class="fa-solid fa-user-group text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Guardians</span>
                 </button>
                 <button onclick="switchAppTab('chat')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-comment-dots text-base"></i>
-                  <span class="text-[9px] mt-0.5">Incident Feed</span>
+                  <i class="fa-solid fa-comment-dots text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Incident Feed</span>
                 </button>
-                <button onclick="lockScreen()" class="text-slate-400 hover:text-rose-400 flex flex-col items-center">
-                  <i class="fa-solid fa-lock text-base"></i>
-                  <span class="text-[9px] mt-0.5">Lock</span>
+                <button onclick="switchAppTab('settings')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-gear text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Settings</span>
+                </button>
+                <button onclick="switchAppTab('telemetry')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-chart-line text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Telemetry</span>
                 </button>
               </div>
+
             </div>
 
             <!-- ================================================== -->
-            <!-- VIEW C: GUARDIANS DIRECTORY (ContactsScreen) -->
+            <!-- 3. SCREEN: GUARDIANS DIRECTORY (Exact Figure 4.5)  -->
             <!-- ================================================== -->
-            <div id="screen-contacts" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto hidden">
-              <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <h3 class="text-base font-black text-white">Emergency Guardians</h3>
-                    <p class="text-[10px] text-slate-400">Multi-Guardian Broadcast Network</p>
-                  </div>
-                  <button onclick="importMockContact()" class="text-xs bg-rose-600 hover:bg-rose-500 text-white px-2.5 py-1 rounded-lg flex items-center gap-1">
-                    <i class="fa-solid fa-plus text-[10px]"></i> Import
+            <div id="screen-contacts" class="flex-1 flex flex-col justify-between overflow-hidden hidden">
+              
+              <!-- Content -->
+              <div class="flex-1 p-4 space-y-3 overflow-y-auto">
+                <div>
+                  <h2 class="text-base font-black text-white">Emergency Guardians</h2>
+                  <p class="text-[10px] text-slate-400">Active receivers for 3s Volume Down SOS</p>
+                </div>
+
+                <!-- 2 Top Buttons: Pick From & + Add Manually (Exact Fig 4.5) -->
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="importMockContact()" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-address-book text-xs"></i> Pick From
+                  </button>
+                  <button onclick="openAddManualModal()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-plus text-xs"></i> Add Manually
                   </button>
                 </div>
 
-                <!-- Contact Cards -->
-                <div id="contacts-list" class="space-y-2">
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div class="text-xs font-bold text-white">Duwa (Primary)</div>
-                      <div class="text-[10px] text-slate-400 font-mono">0776336982</div>
+                <!-- Broadcast Count Pill (Exact Fig 4.5) -->
+                <div class="bg-slate-900 p-2 rounded-xl border border-slate-800 flex items-center space-x-2 text-[10px] text-slate-300">
+                  <i class="fa-solid fa-bell text-cyan-400"></i>
+                  <span>Central Broadcast targets: <strong>4 registered guardian(s)</strong></span>
+                </div>
+
+                <!-- 4 Contact Cards (Exact Fig 4.5) -->
+                <div class="space-y-2">
+                  
+                  <!-- Card #1: Duwa -->
+                  <div class="bg-[#131B2E] p-2.5 rounded-xl border border-[#1E293B] flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="text-xs font-bold text-cyan-400 font-mono">#1</span>
+                      <div>
+                        <div class="flex items-center space-x-1.5">
+                          <span class="text-xs font-bold text-white">Duwa</span>
+                          <span class="text-[9px] bg-cyan-950 text-cyan-300 px-1.5 py-0.2 rounded border border-cyan-800 font-semibold">Guardian</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono">0776336982</div>
+                      </div>
                     </div>
-                    <span class="text-[9px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded border border-rose-800 font-bold">#1 SOS</span>
+                    <button onclick="deleteContactCard(this)" class="text-slate-500 hover:text-rose-400 p-1 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                   </div>
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div class="text-xs font-bold text-white">Thaththi (Father)</div>
-                      <div class="text-[10px] text-slate-400 font-mono">0772914867</div>
+
+                  <!-- Card #2: Thaththi -->
+                  <div class="bg-[#131B2E] p-2.5 rounded-xl border border-[#1E293B] flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="text-xs font-bold text-cyan-400 font-mono">#2</span>
+                      <div>
+                        <div class="flex items-center space-x-1.5">
+                          <span class="text-xs font-bold text-white">Thaththi</span>
+                          <span class="text-[9px] bg-cyan-950 text-cyan-300 px-1.5 py-0.2 rounded border border-cyan-800 font-semibold">Guardian</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono">0772914867</div>
+                      </div>
                     </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">#2 SOS</span>
+                    <button onclick="deleteContactCard(this)" class="text-slate-500 hover:text-rose-400 p-1 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                   </div>
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div class="text-xs font-bold text-white">Amma (Mother)</div>
-                      <div class="text-[10px] text-slate-400 font-mono">0785837837</div>
+
+                  <!-- Card #3: Duwa -->
+                  <div class="bg-[#131B2E] p-2.5 rounded-xl border border-[#1E293B] flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="text-xs font-bold text-cyan-400 font-mono">#3</span>
+                      <div>
+                        <div class="flex items-center space-x-1.5">
+                          <span class="text-xs font-bold text-white">Duwa</span>
+                          <span class="text-[9px] bg-cyan-950 text-cyan-300 px-1.5 py-0.2 rounded border border-cyan-800 font-semibold">Guardian</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono">0776336982</div>
+                      </div>
                     </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">#3 SOS</span>
+                    <button onclick="deleteContactCard(this)" class="text-slate-500 hover:text-rose-400 p-1 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                   </div>
-                  <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <div>
-                      <div class="text-xs font-bold text-white">Brother (Kadawatha)</div>
-                      <div class="text-[10px] text-slate-400 font-mono">0768361075</div>
+
+                  <!-- Card #4: Thaththi -->
+                  <div class="bg-[#131B2E] p-2.5 rounded-xl border border-[#1E293B] flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                      <span class="text-xs font-bold text-cyan-400 font-mono">#4</span>
+                      <div>
+                        <div class="flex items-center space-x-1.5">
+                          <span class="text-xs font-bold text-white">Thaththi</span>
+                          <span class="text-[9px] bg-cyan-950 text-cyan-300 px-1.5 py-0.2 rounded border border-cyan-800 font-semibold">Guardian</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono">0772914867</div>
+                      </div>
                     </div>
-                    <span class="text-[9px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-medium">#4 SOS</span>
+                    <button onclick="deleteContactCard(this)" class="text-slate-500 hover:text-rose-400 p-1 transition"><i class="fa-solid fa-trash-can text-xs"></i></button>
                   </div>
+
                 </div>
               </div>
 
-              <!-- Bottom Navigation Bar -->
-              <div class="h-14 bg-slate-950/90 border-t border-slate-800 -mx-4 -mb-4 px-4 flex items-center justify-around text-xs">
+              <!-- 5-Tab Bottom Navigation Bar (Exact Fig 4.5) -->
+              <div class="h-14 bg-[#0A0F1D] border-t border-slate-800 px-2 flex items-center justify-around text-xs select-none">
                 <button onclick="switchAppTab('home')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-shield-halved text-base"></i>
-                  <span class="text-[9px] mt-0.5">Protect</span>
+                  <i class="fa-solid fa-shield-halved text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Protection</span>
                 </button>
-                <button onclick="switchAppTab('contacts')" class="text-rose-500 font-bold flex flex-col items-center">
-                  <i class="fa-solid fa-user-group text-base"></i>
-                  <span class="text-[9px] mt-0.5">Guardians</span>
+                <button onclick="switchAppTab('contacts')" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow">
+                  <i class="fa-solid fa-user-group text-xs"></i>
+                  <span class="text-[10px]">Guardians</span>
                 </button>
                 <button onclick="switchAppTab('chat')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-comment-dots text-base"></i>
-                  <span class="text-[9px] mt-0.5">Incident Feed</span>
+                  <i class="fa-solid fa-comment-dots text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Incident Feed</span>
                 </button>
-                <button onclick="lockScreen()" class="text-slate-400 hover:text-rose-400 flex flex-col items-center">
-                  <i class="fa-solid fa-lock text-base"></i>
-                  <span class="text-[9px] mt-0.5">Lock</span>
+                <button onclick="switchAppTab('settings')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-gear text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Settings</span>
+                </button>
+                <button onclick="switchAppTab('telemetry')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-chart-line text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Telemetry</span>
                 </button>
               </div>
+
             </div>
 
             <!-- ================================================== -->
-            <!-- VIEW D: INCIDENT CHAT FEED (ChatScreen.kt) -->
+            <!-- 4. SCREEN: INCIDENT CHAT FEED (Exact Figure 4.6)   -->
             <!-- ================================================== -->
-            <div id="screen-chat" class="flex-1 flex flex-col justify-between bg-[#0A0F1D] overflow-hidden hidden">
-              <!-- Header Bar -->
-              <div class="px-4 py-2.5 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+            <div id="screen-chat" class="flex-1 flex flex-col justify-between overflow-hidden hidden bg-[#0A0F1D]">
+              
+              <!-- Feed Top Header (Exact Fig 4.6) -->
+              <div class="px-4 py-2 border-b border-slate-800 bg-[#0E1626] flex items-center justify-between">
                 <div>
-                  <h3 class="text-xs font-black text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-tower-broadcast text-rose-500"></i> Guardian Incident Feed
-                  </h3>
-                  <p class="text-[9px] text-slate-400">Live sync with 4 registered guardians</p>
+                  <h3 class="text-xs font-black text-white">Guardian Incident Feed</h3>
+                  <p class="text-[9px] text-slate-400">Live synchronization with registered guardians</p>
                 </div>
-                <span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-700 px-2 py-0.5 rounded font-mono font-bold">● ONLINE</span>
+                <button onclick="clearChatMessages()" title="Clear chat feed" class="text-slate-500 hover:text-rose-400 p-1">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
               </div>
 
-              <!-- Chat Message Scroll Container -->
-              <div id="chat-messages-container" class="flex-1 p-3 overflow-y-auto space-y-2.5 scrollbar-thin scrollbar-thumb-slate-800">
+              <!-- Chat Message Scroll Container (Exact Fig 4.6) -->
+              <div id="chat-messages-container" class="flex-1 p-3 overflow-y-auto space-y-3 chat-scroll">
                 
-                <!-- Initial System SOS Alert Card -->
-                <div class="bg-rose-950/80 border border-rose-600 rounded-xl p-3 shadow-lg shadow-rose-950/30">
-                  <div class="flex items-center justify-between text-[10px] font-bold text-rose-400 mb-1">
-                    <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY SOS ACTIVATED</span>
-                    <span class="font-mono text-[9px] text-slate-400">10:15 PM</span>
+                <!-- System Alert Card 1 (Exact Fig 4.6) -->
+                <div class="bg-[#1C0E18] border border-rose-900 rounded-xl p-2.5 shadow-md">
+                  <div class="flex items-center justify-between text-[10px] text-rose-400 font-bold mb-1">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> SAFE WOMEN SYSTEM</span>
+                    <span class="text-[9px] text-slate-400">10:16 pm</span>
                   </div>
-                  <p class="text-[11px] text-slate-200 leading-snug">Distress broadcast transmitted via cellular SMS with GPS coordinates fix.</p>
-                  <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="mt-2 inline-flex items-center gap-1.5 text-[10px] bg-rose-600 hover:bg-rose-500 text-white font-bold px-2.5 py-1 rounded-lg transition shadow">
-                    <i class="fa-solid fa-location-dot text-white"></i> View Live on Google Maps (6.93448° N, 79.85006° E)
+                  <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Current live coordinates captured in transit.</p>
+                  <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="mt-2 w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-[10px] py-1.5 rounded-full flex items-center justify-center gap-1.5 shadow">
+                    <i class="fa-solid fa-location-dot"></i> View Live Coordinates on Google Maps
                   </a>
                 </div>
 
-                <!-- Passenger Distress Bubble -->
-                <div class="flex justify-end">
-                  <div class="max-w-[82%] bg-gradient-to-r from-rose-700 to-rose-600 text-white rounded-2xl rounded-tr-sm px-3 py-2 shadow text-xs">
-                    <div class="text-[9px] text-rose-200 font-bold mb-0.5">You (Passenger) • 10:15 PM</div>
-                    <p class="text-[11px] leading-snug">I am in distress on the Kadawatha bus, please track my location immediately!</p>
+                <!-- Passenger Bubble 1 (Exact Fig 4.6) -->
+                <div class="flex flex-col items-end">
+                  <span class="text-[8px] text-slate-400 mr-2 mb-0.5">Passenger (0778361075) • 11:30 pm</span>
+                  <div class="bg-rose-600 text-white text-xs px-3 py-1.5 rounded-2xl rounded-tr-sm max-w-[85%] flex items-center gap-1.5 shadow">
+                    <i class="fa-solid fa-circle-user text-xs text-rose-200"></i>
+                    <span class="text-[11px] font-medium">I am in distress, please track me!</span>
                   </div>
                 </div>
 
-                <!-- Guardian Reply Bubble 1 (Father) -->
-                <div class="flex justify-start">
-                  <div class="max-w-[82%] bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl rounded-tl-sm px-3 py-2 shadow text-xs">
-                    <div class="text-[9px] text-cyan-400 font-bold mb-0.5">Thaththi (Father) • 10:16 PM</div>
-                    <p class="text-[11px] leading-snug">Got your SMS and live map link! Police 119 has been alerted. Stay calm, we are tracking you!</p>
+                <!-- Passenger Bubble 2 (Exact Fig 4.6) -->
+                <div class="flex flex-col items-end">
+                  <span class="text-[8px] text-slate-400 mr-2 mb-0.5">Passenger (0778361075) • 11:30 pm</span>
+                  <div class="bg-rose-600 text-white text-xs px-3 py-1.5 rounded-2xl rounded-tr-sm max-w-[85%] shadow">
+                    <span class="text-[11px] font-medium">wrong alert dad</span>
                   </div>
                 </div>
 
-                <!-- Guardian Reply Bubble 2 (Duwa) -->
-                <div class="flex justify-start">
-                  <div class="max-w-[82%] bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl rounded-tl-sm px-3 py-2 shadow text-xs">
-                    <div class="text-[9px] text-cyan-400 font-bold mb-0.5">Duwa (Primary) • 10:17 PM</div>
-                    <p class="text-[11px] leading-snug">I see your pin moving past Kadawatha interchange. Help is on the way!</p>
+                <!-- System Alert Card 2 (Exact Fig 4.6) -->
+                <div class="bg-[#1C0E18] border border-rose-900 rounded-xl p-2.5 shadow-md">
+                  <div class="flex items-center justify-between text-[10px] text-rose-400 font-bold mb-1">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> SAFE WOMEN SYSTEM</span>
+                    <span class="text-[9px] text-slate-400">11:31 pm</span>
                   </div>
+                  <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Current live coordinates captured in transit.</p>
+                  <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="mt-2 w-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-[10px] py-1.5 rounded-full flex items-center justify-center gap-1.5 shadow">
+                    <i class="fa-solid fa-location-dot"></i> View Live Coordinates on Google Maps
+                  </a>
+                </div>
+
+                <!-- System Alert Card 3 (Exact Fig 4.6) -->
+                <div class="bg-[#1C0E18] border border-rose-900 rounded-xl p-2.5 shadow-md">
+                  <div class="flex items-center justify-between text-[10px] text-rose-400 font-bold mb-1">
+                    <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> SAFE WOMEN SYSTEM</span>
+                    <span class="text-[9px] text-slate-400">01:03 pm</span>
+                  </div>
+                  <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Current live coordinates captured in transit.</p>
                 </div>
 
               </div>
 
-              <!-- Quick Status Chips Row (Matching Jetpack Compose QuickChipItem) -->
-              <div class="px-2 py-1.5 border-t border-slate-800 bg-slate-900/40">
-                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Quick Incident Status Chips:</div>
+              <!-- Quick Incident Status Row (Exact Fig 4.6) -->
+              <div class="px-3 py-1.5 border-t border-slate-800 bg-[#0E1626]/80">
+                <div class="text-[9px] text-slate-400 mb-1">Quick Incident Status:</div>
                 <div class="flex space-x-1.5 overflow-x-auto pb-1 scrollbar-none text-[10px]">
-                  <button onclick="sendQuickChip('🚨 Police 119 has been alerted!')" class="whitespace-nowrap bg-rose-950/70 hover:bg-rose-900 text-rose-300 border border-rose-800 px-2.5 py-1 rounded-full font-medium transition">
-                    🚨 Police 119 alerted
+                  <button onclick="sendQuickChip('I am in distress, please track me!')" class="whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                    <i class="fa-solid fa-circle-user text-rose-400"></i> I am in distress, please track me!
                   </button>
-                  <button onclick="sendQuickChip('🚍 Bus approaching Kadawatha interchange')" class="whitespace-nowrap bg-cyan-950/70 hover:bg-cyan-900 text-cyan-300 border border-cyan-800 px-2.5 py-1 rounded-full font-medium transition">
-                    🚍 Approaching Kadawatha
+                  <button onclick="sendQuickChip('Police 119 has been alerted!')" class="whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-2.5 py-1 rounded-full flex items-center gap-1 transition">
+                    <i class="fa-solid fa-phone text-cyan-400"></i> Police 119 has b...
                   </button>
-                  <button onclick="sendQuickChip('🛡️ Help is on the way, stay on bus')" class="whitespace-nowrap bg-emerald-950/70 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-full font-medium transition">
-                    🛡️ Help on the way
-                  </button>
-                  <button onclick="sendQuickChip('✅ I have arrived safely')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-full font-medium transition">
-                    ✅ Arrived safely
-                  </button>
-                  <button onclick="sendQuickChip('❌ Wrong alert, I am safe')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-2.5 py-1 rounded-full font-medium transition">
-                    ❌ Wrong alert dad
+                  <button onclick="sendQuickChip('wrong alert dad')" class="whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-2.5 py-1 rounded-full transition">
+                    wrong alert dad
                   </button>
                 </div>
               </div>
 
-              <!-- Message Input Field -->
-              <div class="p-2.5 border-t border-slate-800 bg-slate-900 flex items-center space-x-2 relative z-30">
+              <!-- Message Input Field (Exact Fig 4.6) -->
+              <div class="p-2.5 border-t border-slate-800 bg-[#0E1626] flex items-center space-x-2 relative z-30">
                 <input id="chat-input-text" 
                        type="text" 
                        placeholder="Type message to guardians..." 
                        onkeydown="if(event.key==='Enter') sendChatMessage()"
-                       class="flex-1 bg-slate-950 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-rose-500 font-sans placeholder:text-slate-400 select-text cursor-text relative z-30">
-                <button id="btn-send-chat"
+                       class="flex-1 bg-slate-950 text-white text-xs px-3.5 py-2.5 rounded-full border border-slate-700 focus:outline-none focus:border-rose-500 font-sans placeholder:text-slate-500 select-text cursor-text">
+                <button id="btn-send-chat" 
                         onclick="sendChatMessage()" 
-                        class="w-9 h-9 rounded-xl bg-rose-600 hover:bg-rose-500 active:scale-95 text-white flex items-center justify-center text-xs transition shadow-md cursor-pointer relative z-30">
+                        class="w-9 h-9 rounded-full bg-rose-600 hover:bg-rose-500 active:scale-95 text-white flex items-center justify-center text-xs transition shadow-md cursor-pointer">
                   <i class="fa-solid fa-paper-plane"></i>
                 </button>
               </div>
 
-              <!-- Bottom Navigation Bar -->
-              <div class="h-14 bg-slate-950/90 border-t border-slate-800 px-4 flex items-center justify-around text-xs">
+              <!-- 5-Tab Bottom Navigation Bar (Exact Fig 4.6) -->
+              <div class="h-14 bg-[#0A0F1D] border-t border-slate-800 px-2 flex items-center justify-around text-xs select-none">
                 <button onclick="switchAppTab('home')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-shield-halved text-base"></i>
-                  <span class="text-[9px] mt-0.5">Protect</span>
+                  <i class="fa-solid fa-shield-halved text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Protection</span>
                 </button>
                 <button onclick="switchAppTab('contacts')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
-                  <i class="fa-solid fa-user-group text-base"></i>
-                  <span class="text-[9px] mt-0.5">Guardians</span>
+                  <i class="fa-solid fa-user-group text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Guardians</span>
                 </button>
-                <button onclick="switchAppTab('chat')" class="text-rose-500 font-bold flex flex-col items-center">
-                  <i class="fa-solid fa-comment-dots text-base"></i>
-                  <span class="text-[9px] mt-0.5">Incident Feed</span>
+                <button onclick="switchAppTab('chat')" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow">
+                  <i class="fa-solid fa-comment-dots text-xs"></i>
+                  <span class="text-[10px]">Incident Feed</span>
                 </button>
-                <button onclick="lockScreen()" class="text-slate-400 hover:text-rose-400 flex flex-col items-center">
-                  <i class="fa-solid fa-lock text-base"></i>
-                  <span class="text-[9px] mt-0.5">Lock</span>
+                <button onclick="switchAppTab('settings')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-gear text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Settings</span>
+                </button>
+                <button onclick="switchAppTab('telemetry')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-chart-line text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Telemetry</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- ================================================== -->
+            <!-- 5. SCREEN: SETTINGS (SettingsScreen.kt)            -->
+            <!-- ================================================== -->
+            <div id="screen-settings" class="flex-1 flex flex-col justify-between overflow-hidden hidden">
+              <div class="flex-1 p-4 space-y-4 overflow-y-auto">
+                <h2 class="text-base font-black text-white">Application Settings</h2>
+                <div class="bg-[#131B2E] p-3 rounded-xl border border-[#1E293B] flex items-center justify-between">
+                  <div>
+                    <div class="text-xs font-bold text-white">Master Protection</div>
+                    <div class="text-[9px] text-slate-400">Foreground background listener</div>
+                  </div>
+                  <input type="checkbox" checked class="accent-rose-600 w-4 h-4">
+                </div>
+                <div class="bg-[#131B2E] p-3 rounded-xl border border-[#1E293B]">
+                  <div class="text-xs font-bold text-white mb-1">Volume Hold Threshold</div>
+                  <div class="text-[10px] text-cyan-400 font-mono mb-2">3000 ms (Survey Calibrated)</div>
+                  <input type="range" min="1000" max="5000" value="3000" class="w-full accent-rose-600">
+                </div>
+              </div>
+
+              <!-- 5-Tab Bottom Nav -->
+              <div class="h-14 bg-[#0A0F1D] border-t border-slate-800 px-2 flex items-center justify-around text-xs select-none">
+                <button onclick="switchAppTab('home')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-shield-halved text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Protection</span>
+                </button>
+                <button onclick="switchAppTab('contacts')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-user-group text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Guardians</span>
+                </button>
+                <button onclick="switchAppTab('chat')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-comment-dots text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Incident Feed</span>
+                </button>
+                <button onclick="switchAppTab('settings')" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow">
+                  <i class="fa-solid fa-gear text-xs"></i>
+                  <span class="text-[10px]">Settings</span>
+                </button>
+                <button onclick="switchAppTab('telemetry')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-chart-line text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Telemetry</span>
                 </button>
               </div>
             </div>
 
             <!-- ================================================== -->
-            <!-- BLACK LOCKED SCREEN OVERLAY (Simulating Dark Pocket) -->
+            <!-- 6. SCREEN: TELEMETRY & DIAGNOSTICS (5th Tab)       -->
+            <!-- ================================================== -->
+            <div id="screen-telemetry" class="flex-1 flex flex-col justify-between overflow-hidden hidden">
+              <div class="flex-1 p-4 space-y-3 overflow-y-auto font-mono text-xs">
+                <h2 class="text-sm font-black text-white font-sans">Diagnostics &amp; Telemetry</h2>
+                <div class="bg-[#131B2E] p-3 rounded-xl border border-[#1E293B] space-y-1.5 text-[11px]">
+                  <div class="text-slate-400">GPS Latitude: <span class="text-cyan-300">6.93448° N</span></div>
+                  <div class="text-slate-400">GPS Longitude: <span class="text-cyan-300">79.85006° E</span></div>
+                  <div class="text-slate-400">Spatial Accuracy: <span class="text-emerald-400">±10.8 m</span></div>
+                  <div class="text-slate-400">Satellites: <span class="text-yellow-400">14 Acquired</span></div>
+                  <div class="text-slate-400">Trigger Latency: <span class="text-rose-400">142.0 ms (PASS)</span></div>
+                  <div class="text-slate-400">SMS Transmission: <span class="text-emerald-400">2.84 s (PASS)</span></div>
+                </div>
+              </div>
+
+              <!-- 5-Tab Bottom Nav -->
+              <div class="h-14 bg-[#0A0F1D] border-t border-slate-800 px-2 flex items-center justify-around text-xs select-none">
+                <button onclick="switchAppTab('home')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-shield-halved text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Protection</span>
+                </button>
+                <button onclick="switchAppTab('contacts')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-user-group text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Guardians</span>
+                </button>
+                <button onclick="switchAppTab('chat')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-comment-dots text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Incident Feed</span>
+                </button>
+                <button onclick="switchAppTab('settings')" class="text-slate-400 hover:text-slate-200 flex flex-col items-center">
+                  <i class="fa-solid fa-gear text-sm"></i>
+                  <span class="text-[8px] mt-0.5">Settings</span>
+                </button>
+                <button onclick="switchAppTab('telemetry')" class="bg-rose-600 text-white font-bold px-3 py-1.5 rounded-full flex items-center gap-1 shadow">
+                  <i class="fa-solid fa-chart-line text-xs"></i>
+                  <span class="text-[10px]">Telemetry</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!-- BLACK LOCKED SCREEN OVERLAY (Simulating Pocket Mode) -->
             <!-- ================================================== -->
             <div id="screen-locked-overlay" class="absolute inset-0 bg-black z-40 hidden flex flex-col items-center justify-center p-6 text-center">
               <i class="fa-solid fa-lock text-slate-600 text-3xl mb-3"></i>
               <div class="text-slate-400 font-mono text-xs">SCREEN LOCKED / POCKET MODE</div>
               <p class="text-[10px] text-slate-500 mt-2 max-w-[200px]">
-                Squeeze the <strong>Side Volume Down button for 3s</strong> to wake up device and fire SOS!
+                Hold the <strong>Side Volume Down button for 3s</strong> to wake up device and fire SOS!
               </p>
             </div>
 
@@ -545,10 +731,10 @@
       <!-- Panel 3: Viva Testing Scenarios Cheat Sheet -->
       <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 text-xs">
         <div class="font-bold text-white mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-graduation-cap text-rose-400"></i> 3 Test Scenarios to Show Examiners:
+          <i class="fa-solid fa-graduation-cap text-rose-400"></i> Viva Testing Scenarios:
         </div>
         <ol class="list-decimal list-inside space-y-1.5 text-slate-400 text-[11px]">
-          <li><strong class="text-slate-200">Continuous 3.0s Hold:</strong> Press and hold the side Volume Down key for 3s. Watch the SMS deliver with the live Google Maps pin!</li>
+          <li><strong class="text-slate-200">Continuous 3.0s Hold:</strong> Squeeze the side Volume Down key for 3s. Watch the SMS deliver with the live Google Maps pin!</li>
           <li><strong class="text-slate-200">False Alarm Mitigation:</strong> Click Volume Down once (quick tap). Notice that normal volume adjusts and zero alerts are sent!</li>
           <li><strong class="text-slate-200">Screen-Off Locked Mode:</strong> Click the side Power button to make the screen black. Squeeze Volume Down for 3s $\rightarrow$ phone wakes up and dispatches SOS!</li>
         </ol>
@@ -558,23 +744,21 @@
 
   </main>
 
-  <!-- Audio elements for realistic haptic/auditory feedback -->
+  <!-- Audio Elements -->
   <audio id="snd-tick" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
   <audio id="snd-alarm" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
-  <!-- JAVASCRIPT HARDWARE ENGINE -->
+  <!-- SCRIPT ENGINE -->
   <script>
     let enteredPin = "";
     const correctPin = "1234";
-    let isScreenLocked = false;
     let isPowerOff = false;
 
     let holdTimer = null;
     let holdStartTime = 0;
     const REQUIRED_HOLD_MS = 3000;
-    const CIRCLE_CIRCUMFERENCE = 339.3; // 2 * PI * 54
+    const CIRCLE_CIRCUMFERENCE = 339.3;
 
-    // Clock
     function updateScreenClock() {
       const now = new Date();
       const h = String(now.getHours()).padStart(2, '0');
@@ -584,7 +768,6 @@
     setInterval(updateScreenClock, 1000);
     updateScreenClock();
 
-    // Logcat Helper
     function appendLog(tag, msg) {
       const console = document.getElementById('logcat-console');
       const now = new Date();
@@ -595,7 +778,7 @@
       console.scrollTop = console.scrollHeight;
     }
 
-    // PIN Pad logic
+    // PIN Authentication
     function pressPin(num) {
       if (enteredPin.length < 4) {
         enteredPin += num;
@@ -628,32 +811,24 @@
       if (enteredPin === correctPin) {
         document.getElementById('screen-auth').classList.add('hidden');
         document.getElementById('screen-home').classList.remove('hidden');
-        appendLog("AuthManager", "PIN verified successfully (SHA-256 hash match). Session unlocked.");
+        appendLog("AuthManager", "PIN verified successfully (SHA-256 match). Session unlocked.");
       } else {
         document.getElementById('pin-error-text').textContent = "Incorrect PIN (Try 1234)";
         setTimeout(clearPin, 600);
       }
     }
 
-    // Screen Navigation
+    // 5-Tab Screen Navigation
     function switchAppTab(tab) {
-      document.getElementById('screen-home').classList.add('hidden');
-      document.getElementById('screen-contacts').classList.add('hidden');
-      document.getElementById('screen-chat').classList.add('hidden');
-      document.getElementById('screen-' + tab).classList.remove('hidden');
+      const screens = ['home', 'contacts', 'chat', 'settings', 'telemetry'];
+      screens.forEach(s => {
+        const el = document.getElementById('screen-' + s);
+        if (el) el.classList.add('hidden');
+      });
+      const activeEl = document.getElementById('screen-' + tab);
+      if (activeEl) activeEl.classList.remove('hidden');
     }
 
-    function lockScreen() {
-      enteredPin = "";
-      updatePinDots();
-      document.getElementById('screen-home').classList.add('hidden');
-      document.getElementById('screen-contacts').classList.add('hidden');
-      document.getElementById('screen-chat').classList.add('hidden');
-      document.getElementById('screen-auth').classList.remove('hidden');
-      appendLog("AuthManager", "Session locked by passenger. Hardware key listener remains active.");
-    }
-
-    // Side Power Button Toggle (Screen On / Off)
     function togglePowerLock() {
       const overlay = document.getElementById('screen-locked-overlay');
       isPowerOff = !isPowerOff;
@@ -666,9 +841,7 @@
       }
     }
 
-    // ==========================================
-    // HARDWARE VOLUME DOWN TRIGGER ENGINE
-    // ==========================================
+    // Hardware Volume Hold Engine
     const btnSideVolDown = document.getElementById('btn-side-vol-down');
     const tooltipText = document.getElementById('side-vol-down-timer-text');
     const btnTouchZone = document.getElementById('btn-screen-touch-zone');
@@ -689,10 +862,12 @@
         const remaining = Math.max(0, (REQUIRED_HOLD_MS - elapsed) / 1000).toFixed(1);
 
         tooltipText.textContent = `HOLDING: ${remaining}s`;
-        touchTimeDisplay.textContent = `${remaining}s`;
+        if (touchTimeDisplay) touchTimeDisplay.textContent = `${remaining}s`;
 
-        const offset = CIRCLE_CIRCUMFERENCE - (progress * CIRCLE_CIRCUMFERENCE);
-        progressCircle.style.strokeDashoffset = offset;
+        if (progressCircle) {
+          const offset = CIRCLE_CIRCUMFERENCE - (progress * CIRCLE_CIRCUMFERENCE);
+          progressCircle.style.strokeDashoffset = offset;
+        }
 
         if (progress >= 1.0) {
           clearInterval(holdTimer);
@@ -706,9 +881,9 @@
         clearInterval(holdTimer);
         const elapsed = Date.now() - holdStartTime;
         btnSideVolDown.classList.remove('hardware-btn-active', 'bg-rose-400');
-        tooltipText.textContent = "TOUCH & HOLD 3.0s";
-        touchTimeDisplay.textContent = "3.0s";
-        progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
+        tooltipText.textContent = "HOLD 3.0s SOS";
+        if (touchTimeDisplay) touchTimeDisplay.textContent = "3.0s";
+        if (progressCircle) progressCircle.style.strokeDashoffset = CIRCLE_CIRCUMFERENCE;
 
         if (elapsed < REQUIRED_HOLD_MS && elapsed > 100) {
           appendLog("SafeWomenAccessibility", `KeyEvent.ACTION_UP released early at ${elapsed}ms. False-alarm prevented!`);
@@ -720,10 +895,10 @@
     function triggerEmergencySOS(source) {
       btnSideVolDown.classList.remove('hardware-btn-active');
       tooltipText.textContent = "SOS TRIGGERED!";
-      touchTimeDisplay.textContent = "SENT!";
-      progressCircle.style.strokeDashoffset = 0;
+      if (touchTimeDisplay) touchTimeDisplay.textContent = "SENT!";
+      if (progressCircle) progressCircle.style.strokeDashoffset = 0;
 
-      // Wake up screen if power was off!
+      // Wake up screen if power was off
       if (isPowerOff) {
         isPowerOff = false;
         document.getElementById('screen-locked-overlay').classList.add('hidden');
@@ -734,14 +909,14 @@
 
       appendLog("SafeWomenAccessibility", `THRESHOLD REACHED (3000ms)! Initiating emergency dispatch...`);
       appendLog("LocationTracker", "FusedLocationProviderClient acquired GPS: Lat=6.93448, Lon=79.85006, Acc=±10.8m");
-      appendLog("SmsDispatcher", "Broadcasting multi-part SMS to 4 emergency guardians via SmsManager...");
-      appendLog("SmsDispatcher", "SMS delivered to Duwa (0776336982), Thaththi (0772914867), Amma (0785837837).");
+      appendLog("SmsDispatcher", "Broadcasting multi-part SMS to 4 emergency guardians via native SmsManager...");
+      appendLog("SmsDispatcher", "SMS delivered to Duwa (0776336982), Thaththi (0772914867).");
 
       showToast("🚨 EMERGENCY ALERT BROADCAST DELIVERED!");
 
       // Update Guardian Receiving Phone Display
       const now = new Date();
-      const timeStr = now.toLocaleTimeString();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       document.getElementById('sms-received-time').textContent = `Delivered: ${timeStr}`;
       document.getElementById('sms-body-text').innerHTML = `
         <span class="text-rose-400 font-bold">EMERGENCY ALERT:</span> I may be in danger. My current location is: 
@@ -750,21 +925,23 @@
       `;
       document.getElementById('sms-maps-action-card').classList.remove('hidden');
 
-      // Add to in-app chat feed
-      const chatStream = document.getElementById('chat-stream');
-      const newCard = document.createElement('div');
-      newCard.className = "bg-rose-950/80 border border-rose-600 rounded-xl p-3 shadow-md animate-pulse";
-      newCard.innerHTML = `
-        <div class="flex items-center space-x-2 text-rose-400 text-xs font-bold mb-1">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          <span>EMERGENCY SOS ACTIVATED (${timeStr})</span>
-        </div>
-        <p class="text-[11px] text-slate-200">GPS location dispatched to 4 guardians via cellular SMS.</p>
-        <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="inline-block mt-2 text-[10px] bg-rose-600 text-white font-bold px-2 py-1 rounded">
-          <i class="fa-solid fa-map-pin mr-1"></i> Google Maps Link
-        </a>
-      `;
-      chatStream.prepend(newCard);
+      // Add emergency card into in-app chat
+      const chatContainer = document.getElementById('chat-messages-container');
+      if (chatContainer) {
+        const newCard = document.createElement('div');
+        newCard.className = "bg-[#1C0E18] border border-rose-600 rounded-xl p-2.5 shadow-md animate-pulse";
+        newCard.innerHTML = `
+          <div class="flex items-center justify-between text-[10px] text-rose-400 font-bold mb-1">
+            <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> SAFE WOMEN SYSTEM</span>
+            <span class="text-[9px] text-slate-400">${timeStr}</span>
+          </div>
+          <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Current live coordinates captured in transit.</p>
+          <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="mt-2 w-full bg-rose-600 text-white font-bold text-[10px] py-1.5 rounded-full flex items-center justify-center gap-1.5 shadow">
+            <i class="fa-solid fa-location-dot"></i> View Live Coordinates on Google Maps
+          </a>
+        `;
+        chatContainer.prepend(newCard);
+      }
     }
 
     function showToast(msg) {
@@ -780,42 +957,33 @@
       showToast("Volume adjusted (+). No emergency triggered.");
     });
 
-    // Attach Hardware Side Button Listeners
+    // Event Listeners for Hardware Side Button
     btnSideVolDown.addEventListener('mousedown', () => startHardwareHold('Hardware Volume Down'));
     btnSideVolDown.addEventListener('mouseup', () => releaseHardwareHold('Hardware Volume Down'));
     btnSideVolDown.addEventListener('mouseleave', () => releaseHardwareHold('Hardware Volume Down'));
     btnSideVolDown.addEventListener('touchstart', (e) => { e.preventDefault(); startHardwareHold('Hardware Volume Down'); });
     btnSideVolDown.addEventListener('touchend', (e) => { e.preventDefault(); releaseHardwareHold('Hardware Volume Down'); });
 
-    // Attach In-App Screen Touch Zone Listeners
-    btnTouchZone.addEventListener('mousedown', () => startHardwareHold('Screen Touch Zone'));
-    btnTouchZone.addEventListener('mouseup', () => releaseHardwareHold('Screen Touch Zone'));
-    btnTouchZone.addEventListener('mouseleave', () => releaseHardwareHold('Screen Touch Zone'));
-    btnTouchZone.addEventListener('touchstart', (e) => { e.preventDefault(); startHardwareHold('Screen Touch Zone'); });
-    btnTouchZone.addEventListener('touchend', (e) => { e.preventDefault(); releaseHardwareHold('Screen Touch Zone'); });
-
-    // Contact Import
-    function importMockContact() {
-      alert("Selected contact 'Sister (0785837837)' auto-imported from Android Phonebook into Room Database!");
-      appendLog("GuardianDao", "Inserted new emergency guardian from ContactsContract without typing.");
+    // Event Listeners for In-App Touch Zone
+    if (btnTouchZone) {
+      btnTouchZone.addEventListener('mousedown', () => startHardwareHold('Screen Touch Zone'));
+      btnTouchZone.addEventListener('mouseup', () => releaseHardwareHold('Screen Touch Zone'));
+      btnTouchZone.addEventListener('mouseleave', () => releaseHardwareHold('Screen Touch Zone'));
+      btnTouchZone.addEventListener('touchstart', (e) => { e.preventDefault(); startHardwareHold('Screen Touch Zone'); });
+      btnTouchZone.addEventListener('touchend', (e) => { e.preventDefault(); releaseHardwareHold('Screen Touch Zone'); });
     }
 
     // In-App Chat Functions (ChatScreen.kt)
     function sendQuickChip(text) {
-      addMessageToFeed("You (Passenger)", text, true);
+      addMessageToFeed("Passenger (0778361075)", text, true);
       appendLog("ChatRepository", `Quick status chip sent: "${text}"`);
-      // Simulate guardian response
       setTimeout(() => {
         if (text.includes("Police 119")) {
-          addMessageToFeed("Thaththi (Father)", "Understood! Police 119 has dispatched a highway patrol unit.", false);
-        } else if (text.includes("Kadawatha")) {
-          addMessageToFeed("Duwa (Primary)", "Tracking your GPS coordinates on Google Maps. Stay calm!", false);
-        } else if (text.includes("safely")) {
-          addMessageToFeed("Amma (Mother)", "Thank God! We are waiting for you at the terminal entrance.", false);
-        } else if (text.includes("Wrong alert")) {
-          addMessageToFeed("Thaththi (Father)", "Glad you are safe! Calling you now to confirm.", false);
+          addMessageToFeed("Thaththi (Father)", "Understood! Police patrol car notified.", false);
+        } else if (text.includes("wrong alert")) {
+          addMessageToFeed("Thaththi (Father)", "Glad you are safe! Calling you now.", false);
         } else {
-          addMessageToFeed("Thaththi (Father)", "Received. We are actively monitoring your location pin.", false);
+          addMessageToFeed("Thaththi (Father)", "Received. We are actively tracking your route on Google Maps.", false);
         }
       }, 1500);
     }
@@ -824,11 +992,9 @@
       const input = document.getElementById('chat-input-text');
       const text = input.value.trim();
       if (!text) return;
-      addMessageToFeed("You (Passenger)", text, true);
+      addMessageToFeed("Passenger (0778361075)", text, true);
       appendLog("ChatMessageDao", `Persisted message to Room Database: "${text}"`);
       input.value = "";
-      
-      // Simulated guardian reply
       setTimeout(() => {
         addMessageToFeed("Thaththi (Father)", "Message received! We are monitoring your bus route live.", false);
       }, 1800);
@@ -839,16 +1005,46 @@
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       
-      const bubble = document.createElement('div');
-      bubble.className = isPassenger ? "flex justify-end" : "flex justify-start";
-      bubble.innerHTML = `
-        <div class="max-w-[82%] ${isPassenger ? 'bg-gradient-to-r from-rose-700 to-rose-600 text-white rounded-2xl rounded-tr-sm' : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-2xl rounded-tl-sm'} px-3 py-2 shadow text-xs">
-          <div class="text-[9px] ${isPassenger ? 'text-rose-200' : 'text-cyan-400'} font-bold mb-0.5">${sender} • ${timeStr}</div>
-          <p class="text-[11px] leading-snug">${text}</p>
+      const wrap = document.createElement('div');
+      wrap.className = isPassenger ? "flex flex-col items-end" : "flex flex-col items-start";
+      wrap.innerHTML = `
+        <span class="text-[8px] text-slate-400 ${isPassenger ? 'mr-2' : 'ml-2'} mb-0.5">${sender} • ${timeStr}</span>
+        <div class="${isPassenger ? 'bg-rose-600 text-white rounded-2xl rounded-tr-sm' : 'bg-[#131B2E] border border-[#1E293B] text-slate-200 rounded-2xl rounded-tl-sm'} text-xs px-3 py-1.5 max-w-[85%] shadow">
+          <span class="text-[11px] font-medium leading-snug">${text}</span>
         </div>
       `;
-      container.appendChild(bubble);
+      container.appendChild(wrap);
       container.scrollTop = container.scrollHeight;
+    }
+
+    function clearChatMessages() {
+      if (confirm("Clear local chat feed?")) {
+        document.getElementById('chat-messages-container').innerHTML = `
+          <div class="text-center text-[10px] text-slate-500 py-4">Incident chat feed cleared.</div>
+        `;
+        appendLog("ChatMessageDao", "Cleared local chat table in Room Database.");
+      }
+    }
+
+    function importMockContact() {
+      alert("Address Book: Selected contact 'Amma (0785837837)' imported into Room Database without typing!");
+      appendLog("GuardianDao", "Auto-imported contact via ContactsContract.CommonDataKinds.Phone.");
+    }
+
+    function openAddManualModal() {
+      const name = prompt("Enter Guardian Name:");
+      if (!name) return;
+      const phone = prompt("Enter Mobile Number (e.g., 0771234567):");
+      if (!phone) return;
+      alert(`Guardian '${name} (${phone})' saved to Room Database!`);
+      appendLog("GuardianDao", `Manually inserted guardian: ${name} (${phone})`);
+    }
+
+    function deleteContactCard(btn) {
+      if (confirm("Remove guardian from emergency broadcast list?")) {
+        btn.closest('.bg-\\[\\#131B2E\\]').remove();
+        appendLog("GuardianDao", "Deleted guardian record from SQLite.");
+      }
     }
 
     function resetSimulation() {
