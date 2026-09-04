@@ -65,3 +65,28 @@ npm-debug.log
 captures/
 .externalNativeBuild/
 .cxx/
+
+# ==========================================
+# Document & Presentation File Formats
+# (Exclude documents and PDFs from repository)
+# ==========================================
+*.pdf
+*.docx
+*.doc
+*.odt
+*.rtf
+*.pptx
+*.ppt
+*.pages
+*.numbers
+*.keynote
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Retain Excel Evaluation Datasets
+!*.xlsx
+!*.xls
+!*.csv

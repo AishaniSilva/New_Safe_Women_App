@@ -46,14 +46,13 @@ For presentations, live defenses, and web demonstration without an Android devic
 
 ---
 
-## 📚 Documentation & Research Artifacts
-* 🎓 **Viva Voce Defense & Demo Manual:** [`docs/SAFE_Women_Viva_Defense_Manual.md`](./docs/SAFE_Women_Viva_Defense_Manual.md)
-* 📊 **Chapter 5 Evaluation Datasets (.xlsx):** [`docs/evaluation_datasets/`](./docs/evaluation_datasets/)
-  * `SAFE_Women_Chapter_5_Experimental_Evaluation_Datasets.xlsx` (Master workbook with live formulas)
-  * `Table_5_2_Trigger_Recognition_Latency.xlsx` ($N = 10$ laboratory trials, Mean: 142.0 ms)
-  * `Table_5_3_Cellular_SMS_Transmission_Latency.xlsx` (8 carrier route trials across Dialog, Mobitel, Airtel, Hutch)
-  * `Table_5_4_GPS_Spatial_Accuracy_Deviation.xlsx` (Ground-truth surveyed landmarks, Mean drift: ±11.8 m)
-  * `Table_5_5_System_Usability_Scale_SUS_Scores.xlsx` ($N = 15$ participant ratings, Mean SUS: 84.25)
+## 📊 Chapter 5 Experimental Evaluation Datasets (.xlsx)
+The empirical and experimental evaluation datasets used in Chapter 5 are available in the [`datasets/`](./datasets/) directory:
+* `SAFE_Women_Chapter_5_Experimental_Evaluation_Datasets.xlsx` (Master 5-Sheet Workbook with live formulas)
+* `Table_5_2_Trigger_Recognition_Latency.xlsx` ($N = 10$ laboratory trials, Mean: 142.0 ms)
+* `Table_5_3_Cellular_SMS_Transmission_Latency.xlsx` (8 carrier route trials across Dialog, Mobitel, Airtel, Hutch)
+* `Table_5_4_GPS_Spatial_Accuracy_Deviation.xlsx` (Ground-truth surveyed landmarks, Mean drift: ±11.8 m)
+* `Table_5_5_System_Usability_Scale_SUS_Scores.xlsx` ($N = 15$ participant ratings, Mean SUS: 84.25)
 
 ---
 
