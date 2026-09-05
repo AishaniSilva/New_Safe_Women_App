@@ -26,9 +26,10 @@ class SafeWomenAccessibilityService : AccessibilityService() {
     private var powerManager: PowerManager? = null
     private var wakeLock: PowerManager.WakeLock? = null
 
-    private var triggerJob: Job? = null
-    private var isKeyDown: Boolean = false
-    private var keyDownStartTime: Long = 0L
+    private var firstKeyDownTime = 0L
+    private var lastKeyDownTime = 0L
+    private var keyDownPulseCount = 0
+    private var watchdogJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -68,65 +69,81 @@ class SafeWomenAccessibilityService : AccessibilityService() {
 
             when (event.action) {
                 KeyEvent.ACTION_DOWN -> {
-                    if (!isKeyDown) {
-                        isKeyDown = true
-                        keyDownStartTime = System.currentTimeMillis()
-                        Log.d(TAG, "Hardware Volume Down pressed on lockscreen/background. Starting ${threshold}ms hold timer...")
+                    val now = System.currentTimeMillis()
+
+                    // If pulses are more than 400ms apart, previous press was released
+                    if (firstKeyDownTime == 0L || (now - lastKeyDownTime > 400L)) {
+                        firstKeyDownTime = now
+                        lastKeyDownTime = now
+                        keyDownPulseCount = 1
+                        Log.d(TAG, "Hardware Volume Down initial pulse received.")
 
                         try {
-                            wakeLock?.acquire(threshold + 4000L)
+                            wakeLock?.acquire(threshold + 2000L)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
-
-                        // Immediate tactile tick acknowledging button press
-                        EmergencyTriggerCoordinator.vibrateShortTick(this)
-
-                        // Launch active hold countdown with progressive haptic pulses
-                        triggerJob?.cancel()
-                        triggerJob = serviceScope.launch {
-                            delay(1000L)
-                            if (isKeyDown) {
-                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@SafeWomenAccessibilityService, 1)
-                            }
-                            delay(1000L)
-                            if (isKeyDown) {
-                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@SafeWomenAccessibilityService, 2)
-                            }
-                            delay(1000L)
-                            if (isKeyDown) {
-                                Log.i(TAG, "🎯 3-SECOND VOLUME DOWN HOLD COMPLETED! Initiating emergency dispatch...")
-                                EmergencyTriggerCoordinator.triggerEmergency(
-                                    context = this@SafeWomenAccessibilityService,
-                                    triggerSource = "HARDWARE_VOLUME_DOWN_HOLD_ACCESSIBILITY",
-                                    durationMs = threshold
-                                )
-                            }
-                        }
                     } else {
-                        // Key repeat while holding
-                        val elapsed = System.currentTimeMillis() - keyDownStartTime
-                        Log.d(TAG, "Hardware Volume Down holding: elapsed=${elapsed}ms, repeatCount=${event.repeatCount}")
-                        if (elapsed >= threshold && triggerJob?.isActive == true) {
-                            triggerJob?.cancel()
-                            triggerJob = null
-                            Log.i(TAG, "🎯 3-SECOND VOLUME DOWN KEY REPEAT TRIGGER! Initiating emergency dispatch...")
+                        // Continuous hardware repeat pulses while physically holding button
+                        lastKeyDownTime = now
+                        keyDownPulseCount++
+                        val elapsed = now - firstKeyDownTime
+                        Log.d(TAG, "Hardware Volume Down holding pulse: count=$keyDownPulseCount, elapsed=${elapsed}ms")
+
+                        // Subtle tactile ticks during active hold
+                        if (elapsed in 1000L..1250L && keyDownPulseCount in 3..5) {
+                            EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 1)
+                        } else if (elapsed in 2000L..2250L && keyDownPulseCount in 6..8) {
+                            EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 2)
+                        }
+
+                        // STRICT TRIGGER: Must exceed continuous 3000ms AND have received at least 7 repeat pulses!
+                        // A single short touch will have count=1 and elapsed=0ms, so it is IMPOSSIBLE to trigger here.
+                        if (elapsed >= threshold && keyDownPulseCount >= 7) {
+                            Log.i(TAG, "🎯 3-SECOND PHYSICAL VOLUME DOWN HOLD VERIFIED! (Elapsed: ${elapsed}ms, Pulses: $keyDownPulseCount). Triggering emergency...")
+                            firstKeyDownTime = 0L
+                            lastKeyDownTime = 0L
+                            keyDownPulseCount = 0
+                            watchdogJob?.cancel()
+
                             EmergencyTriggerCoordinator.triggerEmergency(
                                 context = this@SafeWomenAccessibilityService,
-                                triggerSource = "HARDWARE_VOLUME_DOWN_REPEAT_ACCESSIBILITY",
+                                triggerSource = "HARDWARE_VOLUME_DOWN_HOLD_ACCESSIBILITY",
                                 durationMs = elapsed
                             )
+                            return true
                         }
                     }
-                    return true // Consume key event to prevent volume slider popup on lockscreen
+
+                    // Watchdog: If button is released, repeat pulses stop immediately.
+                    // After 400ms without a new pulse, reset the hold tracker completely.
+                    watchdogJob?.cancel()
+                    watchdogJob = serviceScope.launch {
+                        delay(400L)
+                        if (firstKeyDownTime != 0L) {
+                            val held = lastKeyDownTime - firstKeyDownTime
+                            Log.d(TAG, "Volume Down released after ${held}ms (Pulses=$keyDownPulseCount < 7). Normal volume adjustment, false alarm prevented.")
+                            firstKeyDownTime = 0L
+                            lastKeyDownTime = 0L
+                            keyDownPulseCount = 0
+                            try {
+                                if (wakeLock?.isHeld == true) {
+                                    wakeLock?.release()
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+                    return false // Pass event to OS for normal volume adjustment on short presses
                 }
 
                 KeyEvent.ACTION_UP -> {
-                    val duration = System.currentTimeMillis() - keyDownStartTime
-                    Log.d(TAG, "Hardware Volume Down released after ${duration}ms. Resetting hold timer.")
-                    isKeyDown = false
-                    triggerJob?.cancel()
-                    triggerJob = null
+                    firstKeyDownTime = 0L
+                    lastKeyDownTime = 0L
+                    keyDownPulseCount = 0
+                    watchdogJob?.cancel()
+                    watchdogJob = null
                     try {
                         if (wakeLock?.isHeld == true) {
                             wakeLock?.release()
@@ -134,7 +151,7 @@ class SafeWomenAccessibilityService : AccessibilityService() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-                    return duration >= threshold
+                    return false
                 }
             }
         }
@@ -145,7 +162,7 @@ class SafeWomenAccessibilityService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        triggerJob?.cancel()
+        watchdogJob?.cancel()
         serviceScope.cancel()
         try {
             if (wakeLock?.isHeld == true) {

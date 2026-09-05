@@ -29,10 +29,10 @@ import lk.kiu.safewomen.utils.Constants
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: MainViewModel
-    private var volumeDownStartTime = 0L
-    private var isHoldingVolumeDown = false
-    private var inAppTriggerJob: Job? = null
-    private val mainScope = CoroutineScope(Dispatchers.Main)
+    private var inAppFirstKeyDownTime = 0L
+    private var inAppLastKeyDownTime = 0L
+    private var inAppPulseCount = 0
+    private var inAppWatchdogJob: Job? = null
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -119,42 +119,60 @@ class MainActivity : ComponentActivity() {
 
             when (event.action) {
                 KeyEvent.ACTION_DOWN -> {
-                    if (!isHoldingVolumeDown) {
-                        isHoldingVolumeDown = true
-                        volumeDownStartTime = System.currentTimeMillis()
-                        EmergencyTriggerCoordinator.vibrateShortTick(this)
-                        Toast.makeText(this, "⚠️ Holding Volume Down for ${(threshold / 1000)}s to trigger SOS...", Toast.LENGTH_SHORT).show()
+                    val now = System.currentTimeMillis()
 
-                        inAppTriggerJob?.cancel()
-                        inAppTriggerJob = mainScope.launch {
-                            delay(1000L)
-                            if (isHoldingVolumeDown) {
-                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@MainActivity, 1)
-                            }
-                            delay(1000L)
-                            if (isHoldingVolumeDown) {
-                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@MainActivity, 2)
-                            }
-                            delay(1000L)
-                            if (isHoldingVolumeDown) {
-                                isHoldingVolumeDown = false
-                                Toast.makeText(this@MainActivity, "🚨 Emergency Triggered! Sending SMS...", Toast.LENGTH_LONG).show()
-                                EmergencyTriggerCoordinator.triggerEmergency(
-                                    context = this@MainActivity,
-                                    triggerSource = "PHYSICAL_VOLUME_DOWN_IN_APP_FOREGROUND",
-                                    durationMs = threshold
-                                )
-                            }
+                    if (inAppFirstKeyDownTime == 0L || (now - inAppLastKeyDownTime > 400L)) {
+                        // Brand new press sequence
+                        inAppFirstKeyDownTime = now
+                        inAppLastKeyDownTime = now
+                        inAppPulseCount = 1
+                    } else {
+                        // Continuing physical hold sequence
+                        inAppLastKeyDownTime = now
+                        inAppPulseCount++
+                        val elapsed = now - inAppFirstKeyDownTime
+
+                        // Progressive haptic pulses during active continuous hold
+                        if (elapsed in 1000L..1250L && inAppPulseCount in 3..5) {
+                            EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 1)
+                        } else if (elapsed in 2000L..2250L && inAppPulseCount in 6..8) {
+                            EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 2)
+                        }
+
+                        // STRICT: Only trigger if continuously held >= 3000ms AND at least 7 repeat pulses
+                        if (elapsed >= threshold && inAppPulseCount >= 7) {
+                            inAppFirstKeyDownTime = 0L
+                            inAppLastKeyDownTime = 0L
+                            inAppPulseCount = 0
+                            inAppWatchdogJob?.cancel()
+
+                            Toast.makeText(this@MainActivity, "🚨 Emergency Triggered! Sending SMS...", Toast.LENGTH_LONG).show()
+                            EmergencyTriggerCoordinator.triggerEmergency(
+                                context = this@MainActivity,
+                                triggerSource = "PHYSICAL_VOLUME_DOWN_IN_APP_FOREGROUND",
+                                durationMs = elapsed
+                            )
+                            return true
                         }
                     }
-                    return true
+
+                    // Watchdog: If released, pulses stop. After 400ms, reset tracker so short presses never trigger.
+                    inAppWatchdogJob?.cancel()
+                    inAppWatchdogJob = CoroutineScope(Dispatchers.Main).launch {
+                        delay(400L)
+                        inAppFirstKeyDownTime = 0L
+                        inAppLastKeyDownTime = 0L
+                        inAppPulseCount = 0
+                    }
+                    return false // Allow normal volume adjustments on short single presses
                 }
                 KeyEvent.ACTION_UP -> {
-                    val held = System.currentTimeMillis() - volumeDownStartTime
-                    isHoldingVolumeDown = false
-                    inAppTriggerJob?.cancel()
-                    inAppTriggerJob = null
-                    return held >= threshold
+                    inAppFirstKeyDownTime = 0L
+                    inAppLastKeyDownTime = 0L
+                    inAppPulseCount = 0
+                    inAppWatchdogJob?.cancel()
+                    inAppWatchdogJob = null
+                    return false
                 }
             }
         }

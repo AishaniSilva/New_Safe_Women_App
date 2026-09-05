@@ -41,9 +41,14 @@ object EmergencyTriggerCoordinator {
 
     /**
      * Executes the emergency alert pipeline. Can be called from ForegroundService (MediaSession),
-     * AccessibilityService, or UI touch zone.
      */
     fun triggerEmergency(context: Context, triggerSource: String, durationMs: Long = 3000L) {
+        // 0. Strict false-positive guard: Physical hardware button triggers MUST have at least 2500ms continuous hold!
+        if (!triggerSource.contains("TOUCH") && durationMs < 2500L) {
+            Log.w(TAG, "Trigger REJECTED as false positive: Hold duration ${durationMs}ms is below 2500ms safety threshold.")
+            return
+        }
+
         val now = System.currentTimeMillis()
         val last = lastTriggerTimestamp.get()
 

@@ -220,12 +220,11 @@ class SafeWomenForegroundService : Service() {
         val now = System.currentTimeMillis()
         val threshold = preferenceManager.triggerDurationMs // Calibrated 3000ms (3.0s)
 
-        if (volumeDownFirstPressTime == 0L || (now - volumeDownLastPressTime > 650L)) {
+        if (volumeDownFirstPressTime == 0L || (now - volumeDownLastPressTime > 400L)) {
             // New hold sequence initiated
             volumeDownFirstPressTime = now
             volumeDownLastPressTime = now
             volumeDownRepeatCount = 1
-            EmergencyTriggerCoordinator.vibrateShortTick(this)
             Log.d(TAG, "Physical Volume Down hold sequence started (Target: ${threshold}ms).")
         } else {
             // Ongoing hold sequence
@@ -234,7 +233,15 @@ class SafeWomenForegroundService : Service() {
             val elapsed = now - volumeDownFirstPressTime
             Log.d(TAG, "Physical Volume Down holding: elapsed=${elapsed}ms, repeats=$volumeDownRepeatCount")
 
-            if (elapsed >= threshold) {
+            // Progressive haptic ticks while actively holding
+            if (elapsed in 1000L..1250L && volumeDownRepeatCount in 3..5) {
+                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 1)
+            } else if (elapsed in 2000L..2250L && volumeDownRepeatCount in 6..8) {
+                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this, 2)
+            }
+
+            // STRICT: Must sustain continuous hold >= 3000ms AND at least 6 repeat pulses
+            if (elapsed >= threshold && volumeDownRepeatCount >= 6) {
                 Log.i(TAG, "🎯 3-SECOND VOLUME DOWN THRESHOLD REACHED WHILE LOCKED! Dispatching SOS...")
                 volumeDownFirstPressTime = 0L
                 volumeDownLastPressTime = 0L
@@ -251,10 +258,10 @@ class SafeWomenForegroundService : Service() {
         }
 
         // Debounce reset: If user releases the button before 3s, no repeats arrive.
-        // After 650ms of silence, reset the accumulator so short presses do NOT trigger an alert.
+        // After 400ms of silence, reset the accumulator so short presses do NOT trigger an alert.
         volumeResetJob?.cancel()
         volumeResetJob = serviceScope.launch {
-            delay(650L)
+            delay(400L)
             if (volumeDownFirstPressTime != 0L) {
                 val heldDuration = volumeDownLastPressTime - volumeDownFirstPressTime
                 Log.d(TAG, "Volume Down released after ${heldDuration}ms (< ${threshold}ms). Normal volume adjustment, false alarm prevented.")
