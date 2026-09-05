@@ -601,13 +601,16 @@
               <div class="flex-1 p-4 space-y-3 overflow-y-auto font-mono text-xs">
                 <h2 class="text-sm font-black text-white font-sans">Diagnostics &amp; Telemetry</h2>
                 <div class="bg-[#131B2E] p-3 rounded-xl border border-[#1E293B] space-y-1.5 text-[11px]">
-                  <div class="text-slate-400">GPS Latitude: <span class="text-cyan-300">6.93448° N</span></div>
-                  <div class="text-slate-400">GPS Longitude: <span class="text-cyan-300">79.85006° E</span></div>
-                  <div class="text-slate-400">Spatial Accuracy: <span class="text-emerald-400">±10.8 m</span></div>
-                  <div class="text-slate-400">Satellites: <span class="text-yellow-400">14 Acquired</span></div>
+                  <div class="text-slate-400">GPS Latitude: <span id="telemetry-lat" class="text-cyan-300">6.93448° N</span></div>
+                  <div class="text-slate-400">GPS Longitude: <span id="telemetry-lon" class="text-cyan-300">79.85006° E</span></div>
+                  <div class="text-slate-400">Spatial Accuracy: <span id="telemetry-acc" class="text-emerald-400">±10.8 m</span></div>
+                  <div class="text-slate-400">Satellites: <span class="text-yellow-400">14 Acquired (Multi-GNSS)</span></div>
                   <div class="text-slate-400">Trigger Latency: <span class="text-rose-400">142.0 ms (PASS)</span></div>
                   <div class="text-slate-400">SMS Transmission: <span class="text-emerald-400">2.84 s (PASS)</span></div>
                 </div>
+                <button onclick="initBrowserGeolocation(true)" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow transition">
+                  <i class="fa-solid fa-crosshairs"></i> Detect My Exact Physical Location
+                </button>
               </div>
 
               <!-- 5-Tab Bottom Nav -->
@@ -759,6 +762,53 @@
     const REQUIRED_HOLD_MS = 3000;
     const CIRCLE_CIRCUMFERENCE = 339.3;
 
+    // Real-time GPS Telemetry State
+    let liveLat = 6.9271;
+    let liveLon = 79.8612;
+    let liveAcc = 8.5;
+    let isRealGpsAcquired = false;
+
+    function initBrowserGeolocation(userTriggered = false) {
+      if ("geolocation" in navigator) {
+        appendLog("LocationTracker", "Initiating high-accuracy GPS lock via HTML5 Geolocation API...");
+        if (userTriggered) showToast("Requesting browser GPS permission...");
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            liveLat = pos.coords.latitude;
+            liveLon = pos.coords.longitude;
+            liveAcc = pos.coords.accuracy || 4.5;
+            isRealGpsAcquired = true;
+            appendLog("LocationTracker", `✅ REAL GPS FIX LOCKED: Lat=${liveLat.toFixed(5)}, Lon=${liveLon.toFixed(5)}, Acc=±${liveAcc.toFixed(1)}m`);
+            updateAllLocationUI();
+            if (userTriggered) showToast(`📍 Real GPS Locked: ±${liveAcc.toFixed(1)}m`);
+          },
+          (err) => {
+            appendLog("LocationTracker", `⚠️ Browser GPS unavailable (${err.message}). Using calibrated baseline.`);
+            if (userTriggered) alert(`Location permission required: ${err.message}. Please click the location pin in your browser URL address bar and choose 'Allow'.`);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+        appendLog("LocationTracker", "HTML5 Geolocation not supported in this browser.");
+      }
+    }
+
+    function updateAllLocationUI() {
+      const mapsUrl = `https://maps.google.com/?q=${liveLat.toFixed(5)},${liveLon.toFixed(5)}`;
+      const smsLatLon = document.getElementById('sms-lat-lon-text');
+      if (smsLatLon) smsLatLon.textContent = `${liveLat.toFixed(5)}° N, ${liveLon.toFixed(5)}° E (Accuracy: ±${liveAcc.toFixed(1)}m)`;
+      
+      const smsMapsBtn = document.getElementById('sms-google-maps-btn');
+      if (smsMapsBtn) smsMapsBtn.href = mapsUrl;
+
+      const telLat = document.getElementById('telemetry-lat');
+      if (telLat) telLat.textContent = `${liveLat.toFixed(5)}° N`;
+      const telLon = document.getElementById('telemetry-lon');
+      if (telLon) telLon.textContent = `${liveLon.toFixed(5)}° E`;
+      const telAcc = document.getElementById('telemetry-acc');
+      if (telAcc) telAcc.textContent = `±${liveAcc.toFixed(1)} m (Live Fix)`;
+    }
+
     function updateScreenClock() {
       const now = new Date();
       const h = String(now.getHours()).padStart(2, '0');
@@ -908,9 +958,10 @@
       try { document.getElementById('snd-alarm').play(); } catch(e){}
 
       appendLog("SafeWomenAccessibility", `THRESHOLD REACHED (3000ms)! Initiating emergency dispatch...`);
-      appendLog("LocationTracker", "FusedLocationProviderClient acquired GPS: Lat=6.93448, Lon=79.85006, Acc=±10.8m");
+      const mapsUrl = `https://maps.google.com/?q=${liveLat.toFixed(5)},${liveLon.toFixed(5)}`;
+      appendLog("LocationTracker", `FusedLocationProviderClient acquired GPS: Lat=${liveLat.toFixed(5)}, Lon=${liveLon.toFixed(5)}, Acc=±${liveAcc.toFixed(1)}m`);
       appendLog("SmsDispatcher", "Broadcasting multi-part SMS to 4 emergency guardians via native SmsManager...");
-      appendLog("SmsDispatcher", "SMS delivered to Duwa (0776336982), Thaththi (0772914867).");
+      appendLog("SmsDispatcher", `SMS delivered with live coordinates: ${mapsUrl}`);
 
       showToast("🚨 EMERGENCY ALERT BROADCAST DELIVERED!");
 
@@ -920,10 +971,14 @@
       document.getElementById('sms-received-time').textContent = `Delivered: ${timeStr}`;
       document.getElementById('sms-body-text').innerHTML = `
         <span class="text-rose-400 font-bold">EMERGENCY ALERT:</span> I may be in danger. My current location is: 
-        <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="text-cyan-400 underline font-bold">https://maps.google.com/?q=6.93448,79.85006</a>. 
+        <a href="${mapsUrl}" target="_blank" class="text-cyan-400 underline font-bold">${mapsUrl}</a>. 
         Please call 119 immediately!
       `;
       document.getElementById('sms-maps-action-card').classList.remove('hidden');
+      const smsGoogleMapsBtn = document.getElementById('sms-google-maps-btn');
+      if (smsGoogleMapsBtn) smsGoogleMapsBtn.href = mapsUrl;
+      const smsLatLon = document.getElementById('sms-lat-lon-text');
+      if (smsLatLon) smsLatLon.textContent = `${liveLat.toFixed(5)}° N, ${liveLon.toFixed(5)}° E (Accuracy: ±${liveAcc.toFixed(1)}m)`;
 
       // Add emergency card into in-app chat
       const chatContainer = document.getElementById('chat-messages-container');
@@ -935,8 +990,8 @@
             <span class="flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> SAFE WOMEN SYSTEM</span>
             <span class="text-[9px] text-slate-400">${timeStr}</span>
           </div>
-          <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Current live coordinates captured in transit.</p>
-          <a href="https://maps.google.com/?q=6.93448,79.85006" target="_blank" class="mt-2 w-full bg-rose-600 text-white font-bold text-[10px] py-1.5 rounded-full flex items-center justify-center gap-1.5 shadow">
+          <p class="text-[10px] text-slate-200">🚨 EMERGENCY SOS ACTIVATED! Real-time coordinates captured in transit.</p>
+          <a href="${mapsUrl}" target="_blank" class="mt-2 w-full bg-rose-600 text-white font-bold text-[10px] py-1.5 rounded-full flex items-center justify-center gap-1.5 shadow">
             <i class="fa-solid fa-location-dot"></i> View Live Coordinates on Google Maps
           </a>
         `;
@@ -1050,6 +1105,11 @@
     function resetSimulation() {
       location.reload();
     }
+
+    // Auto-request browser geolocation on simulator load
+    setTimeout(() => {
+      initBrowserGeolocation(false);
+    }, 500);
   </script>
 
 </body>

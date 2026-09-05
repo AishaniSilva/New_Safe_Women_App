@@ -31,11 +31,16 @@ class MainActivity : ComponentActivity() {
     ) { permissions ->
         val smsGranted = permissions[Manifest.permission.SEND_SMS] ?: false
         val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
-        if (smsGranted && fineLocationGranted) {
+        if (fineLocationGranted || coarseLocationGranted) {
+            viewModel.refreshLocation()
+        }
+
+        if (smsGranted && (fineLocationGranted || coarseLocationGranted)) {
             Toast.makeText(this, "All critical safety permissions granted.", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "SMS & Location permissions are required for emergency safety dispatch.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "SMS & Precise Location permissions are required for accurate emergency dispatch.", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -78,6 +83,31 @@ class MainActivity : ComponentActivity() {
                     viewModel = viewModel
                 )
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLocationHardware()
+        if (::viewModel.isInitialized) {
+            viewModel.refreshLocation()
+        }
+    }
+
+    private fun checkLocationHardware() {
+        val lm = getSystemService(Context.LOCATION_SERVICE) as? android.location.LocationManager ?: return
+        val isEnabled = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            lm.isLocationEnabled
+        } else {
+            lm.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER) ||
+            lm.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)
+        }
+        if (!isEnabled) {
+            Toast.makeText(
+                this,
+                "⚠️ Device GPS is OFF! Please enable Location in Settings for 100% accurate coordinates.",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 

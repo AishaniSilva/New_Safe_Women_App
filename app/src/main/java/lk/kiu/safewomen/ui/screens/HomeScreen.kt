@@ -47,6 +47,7 @@ fun HomeScreen(
     val triggerDurationMs by viewModel.triggerDurationMs.collectAsState()
     val isTriggering by viewModel.isTriggering.collectAsState()
     val triggerProgress by viewModel.triggerProgress.collectAsState()
+    val currentLocation by viewModel.currentLocation.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     var isTouching by remember { mutableStateOf(false) }
@@ -173,7 +174,74 @@ fun HomeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Live GPS Status Banner
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = DarkNavyCard),
+            shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                if (currentLocation != null && !currentLocation!!.isFallback) EmeraldGreen.copy(alpha = 0.4f) else DarkNavyCardBorder
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = "GPS",
+                        tint = if (currentLocation != null && !currentLocation!!.isFallback) EmeraldGreen else AmberWarning,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = if (currentLocation != null && !currentLocation!!.isFallback)
+                                "GPS Fix: ${String.format(java.util.Locale.US, "%.4f° N, %.4f° E", currentLocation!!.latitude, currentLocation!!.longitude)}"
+                            else if (currentLocation?.isFallback == true)
+                                "GPS Signal Weak / Fallback"
+                            else
+                                "Acquiring High-Accuracy GPS...",
+                            color = TextWhite,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = if (currentLocation != null && !currentLocation!!.isFallback)
+                                "Accurate to ±${String.format(java.util.Locale.US, "%.1f", currentLocation!!.accuracy)}m (${currentLocation!!.provider})"
+                            else
+                                "Tap refresh or turn on device GPS",
+                            color = if (currentLocation != null && !currentLocation!!.isFallback) EmeraldGreen else TextMuted,
+                            fontSize = 11.sp
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = { viewModel.refreshLocation() },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = "Refresh GPS",
+                        tint = CyanAccent,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
 
         // Silent Trigger Touch Zone (Digitizer Fallback)
         Card(

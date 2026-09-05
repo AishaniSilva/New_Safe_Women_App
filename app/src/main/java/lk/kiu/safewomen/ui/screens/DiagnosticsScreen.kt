@@ -1,5 +1,7 @@
 package lk.kiu.safewomen.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -13,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,7 @@ import java.util.*
 
 @Composable
 fun DiagnosticsScreen(viewModel: MainViewModel) {
+    val context = LocalContext.current
     val currentLocation by viewModel.currentLocation.collectAsState()
     val alertLogs by viewModel.alertLogs.collectAsState()
 
@@ -79,19 +83,29 @@ fun DiagnosticsScreen(viewModel: MainViewModel) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "GPS SIGNAL LOCATOR",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = CyanAccent
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.GpsFixed,
+                            contentDescription = "GPS",
+                            tint = if (currentLocation != null && !currentLocation!!.isFallback) EmeraldGreen else AmberWarning,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "LIVE GPS PRECISION LOCATOR",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = CyanAccent
+                        )
+                    }
+
                     Surface(
-                        color = EmeraldGreen.copy(alpha = 0.15f),
+                        color = if (currentLocation?.isFallback == true) AmberWarning.copy(alpha = 0.15f) else EmeraldGreen.copy(alpha = 0.15f),
                         shape = RoundedCornerShape(6.dp)
                     ) {
                         Text(
-                            text = currentLocation?.provider ?: "STANDBY",
-                            color = EmeraldGreen,
+                            text = if (currentLocation == null) "SEARCHING..." else if (currentLocation!!.isFallback) "FALLBACK" else (currentLocation!!.provider),
+                            color = if (currentLocation?.isFallback == true) AmberWarning else EmeraldGreen,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -114,7 +128,7 @@ fun DiagnosticsScreen(viewModel: MainViewModel) {
                         Column(modifier = Modifier.padding(10.dp)) {
                             Text(text = "LATITUDE", fontSize = 10.sp, color = TextMuted)
                             Text(
-                                text = String.format(Locale.US, "%.5f", currentLocation?.latitude ?: 6.9271),
+                                text = if (currentLocation != null) String.format(Locale.US, "%.5f°", currentLocation!!.latitude) else "Acquiring...",
                                 color = TextWhite,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -131,7 +145,7 @@ fun DiagnosticsScreen(viewModel: MainViewModel) {
                         Column(modifier = Modifier.padding(10.dp)) {
                             Text(text = "LONGITUDE", fontSize = 10.sp, color = TextMuted)
                             Text(
-                                text = String.format(Locale.US, "%.5f", currentLocation?.longitude ?: 79.8612),
+                                text = if (currentLocation != null) String.format(Locale.US, "%.5f°", currentLocation!!.longitude) else "Acquiring...",
                                 color = TextWhite,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
@@ -140,12 +154,53 @@ fun DiagnosticsScreen(viewModel: MainViewModel) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "Fix Precision: ±${String.format(Locale.US, "%.1f", currentLocation?.accuracy ?: 15.0f)} meters",
-                    fontSize = 11.sp,
-                    color = TextMuted
-                )
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (currentLocation != null && !currentLocation!!.isFallback)
+                            "Precision: ±${String.format(Locale.US, "%.1f", currentLocation!!.accuracy)} meters (Real-time GPS Fix)"
+                        else if (currentLocation?.isFallback == true)
+                            "⚠️ GPS Disabled / Weak. Tap refresh to lock satellite."
+                        else
+                            "Connecting to GPS Satellites...",
+                        fontSize = 11.sp,
+                        color = if (currentLocation != null && !currentLocation!!.isFallback) EmeraldGreen else AmberWarning
+                    )
+                }
+
+                if (currentLocation != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            val mapUri = Uri.parse("https://maps.google.com/?q=${currentLocation!!.latitude},${currentLocation!!.longitude}")
+                            val mapIntent = Intent(Intent.ACTION_VIEW, mapUri)
+                            context.startActivity(mapIntent)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = if (currentLocation!!.isFallback) DarkNavyBackground else EmeraldGreen.copy(alpha = 0.2f)),
+                        shape = RoundedCornerShape(8.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, if (currentLocation!!.isFallback) AmberWarning.copy(alpha = 0.5f) else EmeraldGreen)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Place,
+                            contentDescription = "Map Pin",
+                            tint = if (currentLocation!!.isFallback) AmberWarning else EmeraldGreen,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "Verify Location on Google Maps",
+                            color = TextWhite,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
             }
         }
 
