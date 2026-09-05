@@ -15,18 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
       provider: 'GPS_STANDBY'
     },
     guardians: JSON.parse(localStorage.getItem('safewomen_guardians')) || [
-      { id: 1, name: 'Primary Contact', phone: '0776336982', relationship: 'Guardian', isPrimary: true },
-      { id: 2, name: 'Secondary Contact', phone: '0768361075', relationship: 'Guardian', isPrimary: false }
+      { id: 1, name: 'Primary Guardian', phone: '0710000000', relationship: 'Guardian', isPrimary: true },
+      { id: 2, name: 'Secondary Guardian', phone: '0720000000', relationship: 'Guardian', isPrimary: false }
     ],
     dispatchLogs: JSON.parse(localStorage.getItem('safewomen_logs')) || []
   };
 
-  // If existing storage had older mock numbers, ensure user's actual numbers are present
-  if (state.guardians.length === 0 || state.guardians[0].phone.includes('1234567')) {
-    state.guardians = [
-      { id: 1, name: 'Primary Contact', phone: '0776336982', relationship: 'Guardian', isPrimary: true },
-      { id: 2, name: 'Secondary Contact', phone: '0768361075', relationship: 'Guardian', isPrimary: false }
-    ];
+  // Ensure guardians state is persisted
+  if (!localStorage.getItem('safewomen_guardians')) {
     localStorage.setItem('safewomen_guardians', JSON.stringify(state.guardians));
   }
 
@@ -344,9 +340,9 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('safewomen_logs', JSON.stringify(state.dispatchLogs));
     renderDispatchLogs();
 
-    // 3. Automatic Native Cellular SMS Launch (to 0776336982 & 0768361075)
+    // 3. Automatic Native Cellular SMS Launch
     const phoneList = state.guardians.map(g => g.phone.replace(/[\s+-]/g, '')).filter(p => p.length > 0);
-    const primaryRecipient = phoneList[0] || '0776336982';
+    const primaryRecipient = phoneList[0] || '';
     // Format URI for iOS & Android SMS dispatch
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const smsDelimiter = isIOS ? '&' : '?';

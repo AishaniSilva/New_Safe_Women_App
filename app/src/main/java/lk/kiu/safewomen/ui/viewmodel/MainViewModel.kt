@@ -153,12 +153,26 @@ class MainViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             val startTime = System.currentTimeMillis()
-            var currentGuardians = repository.getAllGuardiansSync()
+            val currentGuardians = repository.getAllGuardiansSync()
             if (currentGuardians.isEmpty()) {
-                currentGuardians = listOf(
-                    Guardian(name = "Primary Guardian", phoneNumber = "0776336982", relationship = "Guardian", isPrimary = true),
-                    Guardian(name = "Secondary Guardian", phoneNumber = "0768361075", relationship = "Guardian", isPrimary = false)
+                val loc = locationTracker.acquireCurrentLocation()
+                _currentLocation.value = loc
+                val newLog = EmergencyAlertLog(
+                    timestamp = System.currentTimeMillis(),
+                    latitude = loc.latitude,
+                    longitude = loc.longitude,
+                    accuracyMeters = loc.accuracy,
+                    recipientsCount = 0,
+                    messagePayload = "No registered guardians found. Please add contacts in the Guardians tab.",
+                    isSuccess = false,
+                    triggerType = triggerType,
+                    triggerLatencyMs = 0L,
+                    totalLatencyMs = System.currentTimeMillis() - startTime
                 )
+                _alertLogs.update { listOf(newLog) + it }
+                _isTriggering.value = false
+                _triggerProgress.value = 0f
+                return@launch
             }
 
             val loc = locationTracker.acquireCurrentLocation()

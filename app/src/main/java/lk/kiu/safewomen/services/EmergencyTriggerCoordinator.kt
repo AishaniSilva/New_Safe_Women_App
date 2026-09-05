@@ -77,13 +77,16 @@ object EmergencyTriggerCoordinator {
                 val locationTracker = LocationTracker(context.applicationContext)
 
                 // Retrieve registered guardians from local Room SQLite database
-                var guardians = db.guardianDao().getAllGuardiansSync().map { it.toDomain() }
+                val guardians = db.guardianDao().getAllGuardiansSync().map { it.toDomain() }
                 if (guardians.isEmpty()) {
-                    Log.w(TAG, "No registered guardians found! Using calibrated baseline contacts.")
-                    guardians = listOf(
-                        Guardian(name = "Primary Contact", phoneNumber = "0776336982", relationship = "Guardian", isPrimary = true),
-                        Guardian(name = "Secondary Contact", phoneNumber = "0768361075", relationship = "Guardian", isPrimary = false)
-                    )
+                    Log.w(TAG, "No registered guardians found! Emergency alert cannot be dispatched via SMS without user-added contacts.")
+                    val broadcastIntent = Intent(Constants.ACTION_SMS_DISPATCHED).apply {
+                        putExtra(Constants.EXTRA_LOG_MESSAGE, "Emergency SOS triggered, but no guardians are registered. Please add contacts in the Guardians tab.")
+                        putExtra(Constants.EXTRA_IS_SUCCESS, false)
+                        setPackage(context.packageName)
+                    }
+                    context.sendBroadcast(broadcastIntent)
+                    return@launch
                 }
 
                 // Acquire high-precision GPS coordinates

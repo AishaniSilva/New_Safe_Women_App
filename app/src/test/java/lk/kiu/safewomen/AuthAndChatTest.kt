@@ -23,12 +23,12 @@ class AuthAndChatTest {
 
     @Test
     fun testMultiGuardianBroadcastRecipientFormat() {
-        val testNumbers = listOf("0776336982", "0768361075", "0712345678")
+        val testNumbers = listOf("0711111111", "0722222222", "0712345678")
         val cleanNumbers = testNumbers.map { it.trim().replace(" ", "").replace("-", "") }
 
         assertEquals(3, cleanNumbers.size)
-        assertTrue(cleanNumbers.contains("0776336982"))
-        assertTrue(cleanNumbers.contains("0768361075"))
+        assertTrue(cleanNumbers.contains("0711111111"))
+        assertTrue(cleanNumbers.contains("0722222222"))
         assertTrue(cleanNumbers.contains("0712345678"))
     }
 }
