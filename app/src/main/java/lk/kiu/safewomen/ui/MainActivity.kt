@@ -15,7 +15,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import android.view.KeyEvent
+import kotlinx.coroutines.*
 import lk.kiu.safewomen.SafeWomenApp
+import lk.kiu.safewomen.services.EmergencyTriggerCoordinator
+import lk.kiu.safewomen.services.SafeWomenForegroundService
 import lk.kiu.safewomen.ui.navigation.MainNavGraph
 import lk.kiu.safewomen.ui.theme.SAFEWomenTheme
 import lk.kiu.safewomen.ui.viewmodel.MainViewModel
@@ -25,6 +29,10 @@ import lk.kiu.safewomen.utils.Constants
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: MainViewModel
+    private var volumeDownStartTime = 0L
+    private var isHoldingVolumeDown = false
+    private var inAppTriggerJob: Job? = null
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -35,6 +43,11 @@ class MainActivity : ComponentActivity() {
 
         if (fineLocationGranted || coarseLocationGranted) {
             viewModel.refreshLocation()
+        }
+
+        val app = application as SafeWomenApp
+        if (app.preferenceManager.isProtectionActive) {
+            SafeWomenForegroundService.startService(this)
         }
 
         if (smsGranted && (fineLocationGranted || coarseLocationGranted)) {
@@ -91,7 +104,61 @@ class MainActivity : ComponentActivity() {
         checkLocationHardware()
         if (::viewModel.isInitialized) {
             viewModel.refreshLocation()
+            viewModel.refreshAccessibilityStatus()
         }
+        val app = application as SafeWomenApp
+        if (app.preferenceManager.isProtectionActive) {
+            SafeWomenForegroundService.startService(this)
+        }
+    }
+
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            val app = application as SafeWomenApp
+            val threshold = app.preferenceManager.triggerDurationMs
+
+            when (event.action) {
+                KeyEvent.ACTION_DOWN -> {
+                    if (!isHoldingVolumeDown) {
+                        isHoldingVolumeDown = true
+                        volumeDownStartTime = System.currentTimeMillis()
+                        EmergencyTriggerCoordinator.vibrateShortTick(this)
+                        Toast.makeText(this, "⚠️ Holding Volume Down for ${(threshold / 1000)}s to trigger SOS...", Toast.LENGTH_SHORT).show()
+
+                        inAppTriggerJob?.cancel()
+                        inAppTriggerJob = mainScope.launch {
+                            delay(1000L)
+                            if (isHoldingVolumeDown) {
+                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@MainActivity, 1)
+                            }
+                            delay(1000L)
+                            if (isHoldingVolumeDown) {
+                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@MainActivity, 2)
+                            }
+                            delay(1000L)
+                            if (isHoldingVolumeDown) {
+                                isHoldingVolumeDown = false
+                                Toast.makeText(this@MainActivity, "🚨 Emergency Triggered! Sending SMS...", Toast.LENGTH_LONG).show()
+                                EmergencyTriggerCoordinator.triggerEmergency(
+                                    context = this@MainActivity,
+                                    triggerSource = "PHYSICAL_VOLUME_DOWN_IN_APP_FOREGROUND",
+                                    durationMs = threshold
+                                )
+                            }
+                        }
+                    }
+                    return true
+                }
+                KeyEvent.ACTION_UP -> {
+                    val held = System.currentTimeMillis() - volumeDownStartTime
+                    isHoldingVolumeDown = false
+                    inAppTriggerJob?.cancel()
+                    inAppTriggerJob = null
+                    return held >= threshold
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun checkLocationHardware() {

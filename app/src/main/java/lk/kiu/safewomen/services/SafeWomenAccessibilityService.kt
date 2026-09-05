@@ -82,10 +82,18 @@ class SafeWomenAccessibilityService : AccessibilityService() {
                         // Immediate tactile tick acknowledging button press
                         EmergencyTriggerCoordinator.vibrateShortTick(this)
 
-                        // Launch active 3-second hold countdown
+                        // Launch active hold countdown with progressive haptic pulses
                         triggerJob?.cancel()
                         triggerJob = serviceScope.launch {
-                            delay(threshold)
+                            delay(1000L)
+                            if (isKeyDown) {
+                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@SafeWomenAccessibilityService, 1)
+                            }
+                            delay(1000L)
+                            if (isKeyDown) {
+                                EmergencyTriggerCoordinator.vibrateHoldCountdownTick(this@SafeWomenAccessibilityService, 2)
+                            }
+                            delay(1000L)
                             if (isKeyDown) {
                                 Log.i(TAG, "🎯 3-SECOND VOLUME DOWN HOLD COMPLETED! Initiating emergency dispatch...")
                                 EmergencyTriggerCoordinator.triggerEmergency(
@@ -94,6 +102,20 @@ class SafeWomenAccessibilityService : AccessibilityService() {
                                     durationMs = threshold
                                 )
                             }
+                        }
+                    } else {
+                        // Key repeat while holding
+                        val elapsed = System.currentTimeMillis() - keyDownStartTime
+                        Log.d(TAG, "Hardware Volume Down holding: elapsed=${elapsed}ms, repeatCount=${event.repeatCount}")
+                        if (elapsed >= threshold && triggerJob?.isActive == true) {
+                            triggerJob?.cancel()
+                            triggerJob = null
+                            Log.i(TAG, "🎯 3-SECOND VOLUME DOWN KEY REPEAT TRIGGER! Initiating emergency dispatch...")
+                            EmergencyTriggerCoordinator.triggerEmergency(
+                                context = this@SafeWomenAccessibilityService,
+                                triggerSource = "HARDWARE_VOLUME_DOWN_REPEAT_ACCESSIBILITY",
+                                durationMs = elapsed
+                            )
                         }
                     }
                     return true // Consume key event to prevent volume slider popup on lockscreen

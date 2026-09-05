@@ -42,6 +42,7 @@ fun HomeScreen(
     onNavigateToContacts: () -> Unit
 ) {
     val context = LocalContext.current
+    val isAccessibilityEnabled by viewModel.isAccessibilityEnabled.collectAsState()
     val isProtectionActive by viewModel.isProtectionActive.collectAsState()
     val guardians by viewModel.guardians.collectAsState()
     val triggerDurationMs by viewModel.triggerDurationMs.collectAsState()
@@ -137,7 +138,7 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Status Card
+        // Status Card with Direct Protection Toggle Switch
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = DarkNavyCard),
@@ -147,30 +148,105 @@ fun HomeScreen(
             Column(modifier = Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = null,
-                        tint = CyanAccent,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "SAFE Protection",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = TextWhite
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = null,
+                            tint = CyanAccent,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Protection Mode",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = TextWhite
+                        )
+                    }
+
+                    Switch(
+                        checked = isProtectionActive,
+                        onCheckedChange = { viewModel.toggleProtection(it) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = TextWhite,
+                            checkedTrackColor = CrimsonPrimary,
+                            uncheckedThumbColor = TextMuted,
+                            uncheckedTrackColor = DarkNavyCardBorder
+                        )
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = if (isProtectionActive)
-                        "Background listener active. Hold volume down for ${(triggerDurationMs / 1000.0).toInt()}s or press touch zone below to trigger alert."
+                        "Background listener active. Hold physical Volume Down for ${(triggerDurationMs / 1000.0).toInt()}s or press touch zone below to alert guardians."
                     else
-                        "Protection is paused. Enable background protection in settings.",
+                        "Protection is paused. Toggle switch ON to activate physical button listener.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = TextMuted
                 )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Hardware Interceptor Status Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = DarkNavyCard),
+            shape = RoundedCornerShape(12.dp),
+            border = androidx.compose.foundation.BorderStroke(
+                1.dp,
+                if (isAccessibilityEnabled) EmeraldGreen.copy(alpha = 0.5f) else AmberWarning.copy(alpha = 0.8f)
+            )
+        ) {
+            Column(modifier = Modifier.padding(14.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (isAccessibilityEnabled) Icons.Default.CheckCircle else Icons.Default.Warning,
+                        contentDescription = null,
+                        tint = if (isAccessibilityEnabled) EmeraldGreen else AmberWarning,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (isAccessibilityEnabled) "Physical Volume Interceptor: ACTIVE" else "Physical Button Interceptor: OFF",
+                        color = if (isAccessibilityEnabled) EmeraldGreen else AmberWarning,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp
+                    )
+                }
+
+                if (!isAccessibilityEnabled) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Android requires Accessibility permission to detect physical Volume Down button presses while the phone is locked.",
+                        color = TextMuted,
+                        fontSize = 12.sp
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(
+                        onClick = {
+                            val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                            context.startActivity(intent)
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = AmberWarning),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth().height(38.dp)
+                    ) {
+                        Text("Enable in Accessibility Settings", color = DarkNavyBackground, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Tip (Android 13/14/15): If grayed out, open Settings > Apps > SAFE Women > 3-dots > 'Allow restricted settings'.",
+                        color = TextMuted,
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
 

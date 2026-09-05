@@ -1,19 +1,26 @@
 package lk.kiu.safewomen.services
 
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
 import android.media.AudioFormat
+import android.media.AudioManager
 import android.media.AudioTrack
 import android.media.VolumeProvider
 import android.media.session.MediaSession
+import android.media.session.PlaybackState
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.*
 import lk.kiu.safewomen.R
 import lk.kiu.safewomen.ui.MainActivity
@@ -31,13 +38,10 @@ import lk.kiu.safewomen.utils.PreferenceManager
  *    active media sessions.
  * 3. This service initializes a lightweight, inaudible AudioTrack (0dB digital silence) and registers
  *    a MediaSession with a custom VolumeProvider (VOLUME_CONTROL_RELATIVE).
- * 4. When the user presses Volume Down while the phone is locked in their bag/pocket with screen off:
- *    - The OS dispatches volume adjustments directly to onAdjustVolume(direction = -1).
- *    - Holding the physical button produces continuous key-repeat pulses (~200-250ms interval).
- *    - The service measures the continuous unbroken duration. If it reaches 3000ms (3.0 seconds),
- *      it triggers the emergency SMS dispatch pipeline!
- *    - A single short press or release prior to 3.0 seconds automatically resets after 600ms,
- *      preventing false alarms.
+ * 4. Audio Focus (AUDIOFOCUS_GAIN) and PlaybackState.STATE_PLAYING are maintained to ensure AudioService
+ *    routes hardware volume rocker adjustments to this session.
+ * 5. A BroadcastReceiver for android.media.VOLUME_CHANGED_ACTION provides a dual-tier volume change listener.
+ * 6. Continuous unbroken Volume Down duration is measured. If it reaches 3000ms (3.0s), the emergency pipeline fires.
  */
 class SafeWomenForegroundService : Service() {
 
@@ -45,12 +49,15 @@ class SafeWomenForegroundService : Service() {
     private lateinit var preferenceManager: PreferenceManager
     private var powerManager: PowerManager? = null
     private var wakeLock: PowerManager.WakeLock? = null
+    private var audioManager: AudioManager? = null
+    private var audioFocusRequest: AudioFocusRequest? = null
 
     // MediaSession & VolumeProvider for Screen-Off Hardware Button Interception
     private var mediaSession: MediaSession? = null
     private var silentAudioTrack: AudioTrack? = null
     @Volatile
     private var isSilentAudioRunning = false
+    private var isVolumeReceiverRegistered = false
 
     // State tracking for continuous 3-second hold
     private var volumeDownFirstPressTime = 0L
@@ -58,10 +65,26 @@ class SafeWomenForegroundService : Service() {
     private var volumeDownRepeatCount = 0
     private var volumeResetJob: Job? = null
 
+    private val volumeChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "android.media.VOLUME_CHANGED_ACTION") {
+                val newVol = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", -1)
+                val oldVol = intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", -1)
+                Log.d(TAG, "VOLUME_CHANGED_ACTION broadcast: old=$oldVol, new=$newVol")
+                if (newVol <= oldVol) {
+                    handleVolumeDownAdjustment()
+                } else {
+                    resetVolumeDownAccumulator("Volume increased")
+                }
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         preferenceManager = PreferenceManager(this)
         powerManager = getSystemService(Context.POWER_SERVICE) as? PowerManager
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as? AudioManager
         
         // Acquire PARTIAL_WAKE_LOCK to prevent CPU deep sleep while protection is active
         wakeLock = powerManager?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SafeWomen:ForegroundServiceWakeLock")
@@ -74,23 +97,76 @@ class SafeWomenForegroundService : Service() {
         createNotificationChannel()
         setupMediaSessionVolumeInterceptor()
         startSilentAudioPlayback()
+
+        try {
+            registerReceiver(volumeChangeReceiver, IntentFilter("android.media.VOLUME_CHANGED_ACTION"))
+            isVolumeReceiverRegistered = true
+            Log.i(TAG, "VOLUME_CHANGED_ACTION receiver registered.")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to register VOLUME_CHANGED_ACTION receiver: ${e.message}")
+        }
+
         Log.i(TAG, "SafeWomenForegroundService created and volume interceptor initialized.")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = buildForegroundNotification()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            var serviceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+        try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                serviceType = serviceType or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                var serviceType = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+                val fineLocGranted = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                if (fineLocGranted) {
+                    serviceType = serviceType or ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                }
+                startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification, serviceType)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION)
+            } else {
+                startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification)
             }
-            startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification, serviceType)
-        } else {
-            startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error starting foreground with specific type: ${e.message}", e)
+            try {
+                startForeground(Constants.FOREGROUND_NOTIFICATION_ID, notification)
+            } catch (e2: Exception) {
+                Log.e(TAG, "Fallback startForeground failed: ${e2.message}", e2)
+            }
         }
 
         return START_STICKY
+    }
+
+    /**
+     * Requests audio focus so Android OS routes hardware volume keys to this service's MediaSession.
+     */
+    private fun requestAudioFocus() {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val playbackAttributes = AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+                audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(playbackAttributes)
+                    .setAcceptsDelayedFocusGain(true)
+                    .setOnAudioFocusChangeListener { focusChange ->
+                        Log.d(TAG, "Audio focus changed: $focusChange")
+                    }
+                    .build()
+                audioFocusRequest?.let { audioManager?.requestAudioFocus(it) }
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager?.requestAudioFocus(
+                    { focusChange -> Log.d(TAG, "Audio focus changed: $focusChange") },
+                    AudioManager.STREAM_MUSIC,
+                    AudioManager.AUDIOFOCUS_GAIN
+                )
+            }
+            Log.i(TAG, "Audio focus requested successfully.")
+        } catch (e: Exception) {
+            Log.w(TAG, "Audio focus request warning: ${e.message}")
+        }
     }
 
     /**
@@ -115,9 +191,22 @@ class SafeWomenForegroundService : Service() {
                 }
 
                 setPlaybackToRemote(volumeProvider)
+
+                val playbackState = PlaybackState.Builder()
+                    .setState(PlaybackState.STATE_PLAYING, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1.0f)
+                    .setActions(
+                        PlaybackState.ACTION_PLAY or
+                        PlaybackState.ACTION_PAUSE or
+                        PlaybackState.ACTION_PLAY_PAUSE
+                    )
+                    .build()
+                setPlaybackState(playbackState)
+
                 isActive = true
             }
-            Log.i(TAG, "MediaSession VolumeProvider successfully activated.")
+
+            requestAudioFocus()
+            Log.i(TAG, "MediaSession VolumeProvider & PlaybackState successfully activated.")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to initialize MediaSession: ${e.message}", e)
         }
@@ -284,6 +373,26 @@ class SafeWomenForegroundService : Service() {
             mediaSession?.isActive = false
             mediaSession?.release()
             mediaSession = null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            if (isVolumeReceiverRegistered) {
+                unregisterReceiver(volumeChangeReceiver)
+                isVolumeReceiverRegistered = false
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                audioFocusRequest?.let { audioManager?.abandonAudioFocusRequest(it) }
+            } else {
+                @Suppress("DEPRECATION")
+                audioManager?.abandonAudioFocus(null)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }

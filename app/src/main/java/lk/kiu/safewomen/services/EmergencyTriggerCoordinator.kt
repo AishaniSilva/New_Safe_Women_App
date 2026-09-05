@@ -136,17 +136,45 @@ object EmergencyTriggerCoordinator {
     }
 
     /**
-     * Subtle tactile tick to indicate button press registration.
+     * Distinct tactile tick to indicate button press registration.
      */
     fun vibrateShortTick(context: Context) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
-                vm?.defaultVibrator?.vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE))
+                vm?.defaultVibrator?.vibrate(VibrationEffect.createOneShot(70, VibrationEffect.DEFAULT_AMPLITUDE))
             } else {
                 @Suppress("DEPRECATION")
                 val v = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-                v?.vibrate(40)
+                v?.vibrate(70)
+            }
+        } catch (e: Exception) {
+            // Ignore vibration failure
+        }
+    }
+
+    /**
+     * Tactile pulses at each second of continuous physical hold (countdown feeling).
+     */
+    fun vibrateHoldCountdownTick(context: Context, second: Int) {
+        try {
+            val pattern = if (second == 1) {
+                longArrayOf(0, 90)
+            } else {
+                longArrayOf(0, 80, 80, 80)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vm = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                vm?.defaultVibrator?.vibrate(VibrationEffect.createWaveform(pattern, -1))
+            } else {
+                @Suppress("DEPRECATION")
+                val v = context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    v?.vibrate(VibrationEffect.createWaveform(pattern, -1))
+                } else {
+                    @Suppress("DEPRECATION")
+                    v?.vibrate(pattern, -1)
+                }
             }
         } catch (e: Exception) {
             // Ignore vibration failure
@@ -191,6 +219,25 @@ object EmergencyTriggerCoordinator {
             screenLock?.acquire(3000L)
         } catch (e: Exception) {
             Log.w(TAG, "Failed to acquire screen wake lock: ${e.message}")
+        }
+    }
+
+    /**
+     * Checks if SafeWomenAccessibilityService is enabled in Android settings.
+     */
+    fun isAccessibilityServiceEnabled(context: Context): Boolean {
+        return try {
+            val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as? android.view.accessibility.AccessibilityManager
+                ?: return false
+            val enabledServices = am.getEnabledAccessibilityServiceList(android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+            val expectedPackage = context.packageName
+            val expectedClass = SafeWomenAccessibilityService::class.java.name
+            enabledServices.any {
+                it.resolveInfo.serviceInfo.packageName == expectedPackage &&
+                it.resolveInfo.serviceInfo.name == expectedClass
+            }
+        } catch (e: Exception) {
+            false
         }
     }
 }

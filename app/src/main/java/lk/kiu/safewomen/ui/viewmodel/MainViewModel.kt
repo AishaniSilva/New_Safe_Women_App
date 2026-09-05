@@ -15,6 +15,7 @@ import lk.kiu.safewomen.data.repository.ChatRepository
 import lk.kiu.safewomen.data.repository.GuardianRepository
 import lk.kiu.safewomen.location.LocationTracker
 import lk.kiu.safewomen.location.SafeLocationResult
+import lk.kiu.safewomen.services.EmergencyTriggerCoordinator
 import lk.kiu.safewomen.services.SafeWomenForegroundService
 import lk.kiu.safewomen.telephony.SmsDispatcher
 import lk.kiu.safewomen.utils.AuthManager
@@ -41,6 +42,9 @@ class MainViewModel(
     private val _isProtectionActive = MutableStateFlow(preferenceManager.isProtectionActive)
     val isProtectionActive: StateFlow<Boolean> = _isProtectionActive.asStateFlow()
 
+    private val _isAccessibilityEnabled = MutableStateFlow(false)
+    val isAccessibilityEnabled: StateFlow<Boolean> = _isAccessibilityEnabled.asStateFlow()
+
     private val _triggerMode = MutableStateFlow(preferenceManager.triggerMode)
     val triggerMode: StateFlow<TriggerMode> = _triggerMode.asStateFlow()
 
@@ -64,6 +68,11 @@ class MainViewModel(
 
     init {
         refreshLocation()
+        refreshAccessibilityStatus()
+    }
+
+    fun refreshAccessibilityStatus() {
+        _isAccessibilityEnabled.value = EmergencyTriggerCoordinator.isAccessibilityServiceEnabled(getApplication())
     }
 
     fun setTriggerProgress(progress: Float) {
